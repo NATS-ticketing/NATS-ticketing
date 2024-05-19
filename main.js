@@ -5,7 +5,11 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
-await mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(`${process.env.MONGO_URL}/ticketing`, { dbName: "ticketing" })
+    .catch(err => console.log(err));
+
+mongoose.connection.on('connected', () => console.log('Mongo connected'));
+mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
 
 const servers = process.env.NATS_URL;
 const nc = await connect({

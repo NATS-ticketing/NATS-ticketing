@@ -12,7 +12,7 @@ const nc = await connect({
     servers: servers.split(","),
 });
 
-let r = await nc.request("ticketing.0.state");
+let r = await nc.request("ticketing.1.state");
 console.log("reply", r.json());
 
 let r2 = await nc.request("ticketing.99.state");

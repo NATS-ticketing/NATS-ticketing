@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb';
 
 
 async function run() {
-    const uri = "mongodb://localhost:27017/"; // CHANGE THIS
+    const uri = ""; // CHANGE THIS
     const client = new MongoClient(uri);
 
     try {
@@ -14,8 +14,9 @@ async function run() {
         const sessionsCollection = database.collection('sessions');
         const seatsCollection = database.collection('seats');
 
-        await sessionsCollection.deleteMany({});
-        await seatsCollection.deleteMany({});
+        await sessionsCollection.drop();
+        await seatsCollection.drop();
+        console.log('Collections dropped');
 
         // Create index
         await sessionsCollection.createIndex({ session_id: 1 });
@@ -76,8 +77,16 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
                 });
             }
         });
+        // MongoBulkWriteError: Error=16500, RetryAfterMs=10, Details='Response status code does not indicate success:
+        // TooManyRequests (429); Substatus: 3200; ActivityId: 877400f0-c041-401e-8455-c33e0fa3ef93; Reason: (
 
-        await seatsCollection.insertMany(seats);
+        for (let i = 0; i < seats.length; i += 40) {
+
+            await seatsCollection.insertMany(seats.slice(i, i + 40));
+            await new Promise(r => setTimeout(r, 500));
+            console.log(`Session ${sessionObj.session_name} inserted ${i + 40} seats`);
+        }
+
         console.log(`Session ${sessionObj.session_name} inserted`);
     }
 }
