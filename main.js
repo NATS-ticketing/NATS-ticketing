@@ -51,9 +51,12 @@ root.addEndpoint("snapUp", {
     },
 });
 
+
+// TODO: 這裡要 發布通知 可能不是直接加入 endpoint
 root.addEndpoint("notify", {
     handler: (err, msg) => {
         // TODO
+
     },
     subject: "*.notify.*",
     metadata: {
