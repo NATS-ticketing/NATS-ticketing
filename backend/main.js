@@ -3,11 +3,10 @@ import { stateController } from "./controllers/stateController.js";
 import { snapUpController } from "./controllers/snapUpController.js";
 import { confirmController } from "./controllers/confirmController.js";
 import { cancelController } from "./controllers/cancelController.js";
-import { NotifyController } from "./controllers/notifyController.js";
+import { createNotifyController } from "./controllers/notifyController.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-
-let EventEmitter = require("events");
+import { EventEmitter } from "events";
 
 dotenv.config();
 
@@ -82,7 +81,7 @@ emitter.on("start", function (session) {
     // TODO
     // publish to subject: "$(session).notify.*",
 });
-let notifyController = new NotifyController(emitter);
+let notifyController = await createNotifyController(emitter);
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {

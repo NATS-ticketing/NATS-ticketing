@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 const sessionSchema = new mongoose.Schema({
     session_id: Number,
     session_name: String,
+    start_time: Date,
     areas: [
         {
             area_id: Number,

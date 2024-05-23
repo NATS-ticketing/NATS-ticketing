@@ -24,9 +24,16 @@ async function run() {
         await sessionsCollection.createIndex({ session_id: 1 });
         await seatsCollection.createIndex({ session_id: 1, area_id: 1, seat: 1 });
 
+
+        const n_minutes = 3; // 開始時間是現在時間的幾分鐘後
+        let new_start_time = new Date(Date.now() + n_minutes * 60 * 1000);
+        new_start_time.setSeconds(0);
+        new_start_time.setMilliseconds(0);
+
         const sessionObj1 = {
             sessionId: 1,
             session_name: "大仁樓晚會",
+            start_time: new_start_time,
             areas: [
                 { area_id: 1, area_name: "A區", price: 3000, max_seats: 100 },
                 { area_id: 2, area_name: "B區", price: 4000, max_seats: 100 },
@@ -37,6 +44,7 @@ async function run() {
         const sessionObj2 = {
             sessionId: 2,
             session_name: "BABYMONSTER",
+            start_time: new_start_time,
             areas: [
                 { area_id: 1, area_name: "A區", price: 3000, max_seats: 500 },
                 { area_id: 2, area_name: "B區", price: 3500, max_seats: 500 },
@@ -63,6 +71,7 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
             _id: sessionId,
             session_id: sessionId,
             session_name: sessionObj.session_name,
+            start_time: new Date(),
             areas: areas
         });
 
