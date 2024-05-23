@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 async function run() {
-    const uri = process.env.MONGO_URL; 
+    const uri = process.env.MONGO_URL;
     const client = new MongoClient(uri);
 
     try {
@@ -85,7 +85,7 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
         for (let i = 0; i < seats.length; i += 40) {
 
             await seatsCollection.insertMany(seats.slice(i, i + 40));
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 1000));
             console.log(`Session ${sessionObj.session_name} inserted ${i + 40} seats`);
         }
 
