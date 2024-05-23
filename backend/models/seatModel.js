@@ -4,7 +4,7 @@ const seatSchema = new mongoose.Schema({
     area_id: Number,
     seat: Number,
     seat_status: Number,
-    token: String,
+    order: String,
     expire: Date
 });
 

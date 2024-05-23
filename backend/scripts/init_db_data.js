@@ -83,7 +83,7 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
                     area_id: area.area_id,
                     seat: i,
                     seat_status: 0, // 0: empty
-                    token: null,
+                    order: null,
                     expire: null
                 });
             }
