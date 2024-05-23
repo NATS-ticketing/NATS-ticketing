@@ -3,7 +3,7 @@ const seatSchema = new mongoose.Schema({
     session_id: Number,
     area_id: Number,
     seat: Number,
-    status: Number,
+    seat_status: Number,
     token: String,
     expire: Date
 });

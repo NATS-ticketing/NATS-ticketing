@@ -2,10 +2,12 @@
  * 初始化資料庫資料用
  */
 import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
 
+dotenv.config({ path: '../.env' });
 
 async function run() {
-    const uri = ""; // CHANGE THIS
+    const uri = process.env.MONGO_URL; 
     const client = new MongoClient(uri);
 
     try {

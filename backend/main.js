@@ -1,7 +1,13 @@
 import { connect } from "nats";
 import { stateController } from "./controllers/stateController.js";
+import { snapUpController } from "./controllers/snapUpController.js";
+import { confirmController } from "./controllers/confirmController.js";
+import { cancelController } from "./controllers/cancelController.js";
+import { NotifyController } from "./controllers/notifyController.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+
+let EventEmitter = require("events");
 
 dotenv.config();
 
@@ -43,7 +49,7 @@ root.addEndpoint("state", {
 root.addEndpoint("snapUp", {
     handler: (err, msg) => {
         // TODO
-        //snapUpController.handle(err, msg);
+        snapUpController.handle(err, msg);
     },
     subject: "*.*.snapUp",
     metadata: {
@@ -53,20 +59,35 @@ root.addEndpoint("snapUp", {
 
 
 // TODO: 這裡要 發布通知 可能不是直接加入 endpoint
-root.addEndpoint("notify", {
-    handler: (err, msg) => {
-        // TODO
+// root.addEndpoint("notify", {
+//     handler: (err, msg) => {
+//         // TODO
 
-    },
-    subject: "*.notify.*",
-    metadata: {
-        schema: "Notify a session is going to sell tickets",
-    },
+//     },
+//     subject: "*.notify.*",
+//     metadata: {
+//         schema: "Notify a session is going to sell tickets",
+//     },
+// });
+
+let emitter = new EventEmitter();
+emitter.on("clear", function (session, area, num) {
+    // TODO
+    // publish to subject: "$(session).notify.$(area)"
+    // payload {
+    //     "empty": $(num)
+    // }
 });
+emitter.on("start", function (session) {
+    // TODO
+    // publish to subject: "$(session).notify.*",
+});
+let notifyController = new NotifyController(emitter);
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
         // TODO
+        confirmController.handle(err, msg);
     },
     subject: "*.*.*.confirm",
     metadata: {
@@ -77,6 +98,7 @@ root.addEndpoint("confirm", {
 root.addEndpoint("cancel", {
     handler: (err, msg) => {
         // TODO
+        cancelController.handle(err, msg);
     },
     subject: "*.*.*.cancel",
     metadata: {

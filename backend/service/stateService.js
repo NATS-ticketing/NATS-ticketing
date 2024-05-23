@@ -11,5 +11,13 @@ export const stateService = {
             console.log(err);
             return null;
         }
+    },
+    getSession: async () => {
+        try {
+            let sessions = await Session.find();
+            return sessions;
+        } catch (err) {
+            return null;
+        }
     }
 };
