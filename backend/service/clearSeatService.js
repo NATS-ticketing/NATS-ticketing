@@ -15,14 +15,12 @@ export const clearSeatService = {
             // return 各區張數
             // e.g. {1: 10, 2: 20, 3: 30}
 
-            let now = new Date();
-
             // Reset their status ($lte:<= , $lt:< , $in:in array)
             let result = await Seat.updateMany(
                 {
                     session_id: Number(session),
                     seat_status: 1,
-                    expire: { $lt: now }
+                    expire: { $lt: Date.now() }
                 },
                 {
                     $set: { seat_status: 0, expire: null, order: null }
