@@ -15,7 +15,6 @@ export const orderService = {
             //    可能會有型態轉換問題 因為db存的格式是Date
             //    如果有問題 return false
             // 3. 如果都沒問題 updateMany -> seat_status: 2 & return true
-            // 1. Check if each seat's order matches the provided order
             
             // Order mismatch, return false
             for (let seat of orderSeats) {
