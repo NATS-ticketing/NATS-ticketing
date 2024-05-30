@@ -16,14 +16,26 @@ class NotifyController {
         sessions.forEach(session => {
             // TODO
             // 計算還要多少(ms)開始售票存進delay (start_time - Date.now() : 0)
-            const delay = 0;
+
+            // Calculate the delay until the session starts
+            const delay = Math.max(new Date(session.start_time).getTime() - Date.now(), 0);
             setTimeout(() => {
                 startedSessions.push(session.session_id);
-                this.emitter.emit('start');
+                this.emitter.emit('start', session.session_id);
             }, delay);
+            
         });
 
-        this.startClearingInterval();
+        this.startClearingInterval()
+
+        //     const delay = 0;
+        //     setTimeout(() => {
+        //         startedSessions.push(session.session_id);
+        //         this.emitter.emit('start');
+        //     }, delay);
+        // });
+
+        // this.startClearingInterval();
     }
 
     startClearingInterval() {
@@ -32,7 +44,10 @@ class NotifyController {
                 let result = clearSeatService.clear(session);
                 // TODO
                 // emit"各區"結果
+                
+                this.emitter.emit("clear", session, area, result[area]);
                 // this.emitter.emit("clear", session, area, num);
+
             });
 
         }, freq);
