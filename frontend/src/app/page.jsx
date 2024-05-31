@@ -1,6 +1,7 @@
 "use client";
 import { NextUIProvider } from "@nextui-org/react";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { useState } from "react";
@@ -23,30 +24,33 @@ export default function Home() {
 
   return (
     <NextUIProvider>
-      <Header />
-      <main className="h-screen bg-slate-100">
-        <div className="h-1/4">
-          <Carousel
-            centerMode
-            centerSlidePercentage={60}
-            infiniteLoop
-            autoPlay
-            showThumbs={false}
-            onChange={handleSlideChange}
-          >
-            {carouselImgs.map((img, index) => (
-              <img
-                src={img.src}
-                alt={img.alt}
-                className={`p-1 ${
-                  currSlide === index ? "opacity-100" : "opacity-50"
-                }`}
-                key={img.id}
-              />
-            ))}
-          </Carousel>
-        </div>
-      </main>
+      <div className="">
+        <Header />
+        <main className="h-screen bg-gray-100">
+          <div>
+            <Carousel
+              centerMode
+              centerSlidePercentage={60}
+              infiniteLoop
+              autoPlay
+              showThumbs={false}
+              onChange={handleSlideChange}
+            >
+              {carouselImgs.map((img, index) => (
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className={`p-1 ${
+                    currSlide === index ? "opacity-100" : "opacity-50"
+                  }`}
+                  key={img.id}
+                />
+              ))}
+            </Carousel>
+          </div>
+        </main>
+        <Footer />
+      </div>
     </NextUIProvider>
   );
 }
