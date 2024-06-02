@@ -11,19 +11,19 @@ class NotifyController {
     }
 
     async init() {
-        let sessions = await stateService.getSession();
+        // let sessions = await stateService.getSession();
 
-        sessions.forEach(session => {
-            // TODO
-            // 計算還要多少(ms)開始售票存進delay (start_time - Date.now() : 0)
-            const delay = 0;
-            setTimeout(() => {
-                startedSessions.push(session.session_id);
-                this.emitter.emit('start');
-            }, delay);
-        });
+        // sessions.forEach(session => {
+        //     // TODO
+        //     // 計算還要多少(ms)開始售票存進delay (start_time - Date.now() : 0)
+        //     const delay = 0;
+        //     setTimeout(() => {
+        //         startedSessions.push(session.session_id);
+        //         this.emitter.emit('start');
+        //     }, delay);
+        // });
 
-        this.startClearingInterval();
+        // this.startClearingInterval();
     }
 
     startClearingInterval() {

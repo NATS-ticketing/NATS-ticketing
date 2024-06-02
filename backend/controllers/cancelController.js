@@ -15,15 +15,23 @@ export const cancelController = {
             const order = msg.subject.split(".")[3];
             const seats = JSON.parse(msg.data).seats;
 
-            await orderService.cancelOrder(session, area, order, seats);
+            const result = await orderService.cancelOrder(session, area, order, seats);
 
-            msg?.respond(JSON.stringify({
-                "status": "success",
-                "session_id": session,
-                "area_id": area,
-                "seats": seats,
-                "seat_status": 0,
-            }));
+            if(result === false){
+                msg?.respond(JSON.stringify({
+                    "status": "error",
+                    "message": "cancel failed"
+                }));
+
+            }else{
+                msg?.respond(JSON.stringify({
+                    "status": "success",
+                    "session_id": session,
+                    "area_id": area,
+                    "seats": seats,
+                    "seat_status": 0,
+                }));
+            }
 
 
         } catch (error) {

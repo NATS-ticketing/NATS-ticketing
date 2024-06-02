@@ -25,6 +25,8 @@ export const orderService = {
 
             // Validate expiration
             for (let seat of orderSeats) {
+                // console.log("expiration: ", seat.expire);
+                // console.log("date: ", Date.now());
                 if (seat.expire < Date.now()) {
                     return false;
                 }
@@ -52,7 +54,11 @@ export const orderService = {
 
     cancelOrder: async (session, area, order, seats) => {
         try {
-
+            let orderSeats = await Seat.find({
+                "session_id": Number(session),
+                "area_id": Number(area),
+                "seat": { $in: seats },
+            });
             // TODO
             // 1. 比對每個座位的order 如果不符合就err
             // 2. 如果都沒問題 updateMany -> seat_status: 0 & expire: null

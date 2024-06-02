@@ -28,7 +28,7 @@ export const snapUpService = {
                 {
                     $set: {
                         "seat_status": 1,
-                        "token": order_id,
+                        "order": order_id,
                         "expire": expire_time
                     },
                 }
@@ -37,11 +37,17 @@ export const snapUpService = {
             let orderSeats = await Seat.find({
                 "session_id": Number(session),
                 "area_id": Number(area),
-                "token": order_id,
+                "order": order_id,
                 "seat_status": 1,
             });
 
-            return orderSeats;
+            return {
+                order_id: order_id,
+                session_id: Number(session),
+                area_id: Number(area),
+                seats: orderSeats.map(seat => seat.seat),
+                seat_status: 1
+            }
 
         } catch (err) {
             console.log(err);
