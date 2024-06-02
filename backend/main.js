@@ -82,7 +82,6 @@ root.addEndpoint("snapUp", {
 //     // publish to subject: "$(session).notify.*",
 // });
 
-// Publish notifications
 let emitter = new EventEmitter();
 
 emitter.on("clear", function (session, area, num) {
@@ -98,8 +97,6 @@ emitter.on("start", function (session) {
 });
 
 // let notifyController = await createNotifyController(emitter);
-
-
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
