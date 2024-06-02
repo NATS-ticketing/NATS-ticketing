@@ -69,19 +69,37 @@ root.addEndpoint("snapUp", {
 //     },
 // });
 
+// let emitter = new EventEmitter();
+// emitter.on("clear", function (session, area, num) {
+//     // TODO
+//     // publish to subject: "$(session).notify.$(area)"
+//     // payload {
+//     //     "empty": $(num)
+//     // }
+// });
+// emitter.on("start", function (session) {
+//     // TODO
+//     // publish to subject: "$(session).notify.*",
+// });
+
+// Publish notifications
 let emitter = new EventEmitter();
+
 emitter.on("clear", function (session, area, num) {
-    // TODO
-    // publish to subject: "$(session).notify.$(area)"
-    // payload {
-    //     "empty": $(num)
-    // }
+    const subject = `${session}.notify.${area}`;
+    const payload = { "empty": num };
+    nc.publish(subject, JSON.stringify(payload));
 });
+
 emitter.on("start", function (session) {
-    // TODO
-    // publish to subject: "$(session).notify.*",
+    const subject = `${session}.notify.*`;
+    const payload = { "message": "Session is starting ticket sales." };
+    nc.publish(subject, JSON.stringify(payload));
 });
-let notifyController = await createNotifyController(emitter);
+
+// let notifyController = await createNotifyController(emitter);
+
+
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
