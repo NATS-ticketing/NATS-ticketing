@@ -26,6 +26,7 @@ export const clearSeatService = {
                     $set: { seat_status: 0, expire: null, order: null }
                 }
             );
+            console.log(result);
 
             // Update only the expired seats to reset their status
             // let expiredSeatIds = expiredSeats.map(seat => seat._id);

@@ -81,6 +81,7 @@ root.addEndpoint("snapUp", {
 //     // TODO
 //     // publish to subject: "$(session).notify.*",
 // });
+// New clear endpoint
 
 let emitter = new EventEmitter();
 
@@ -96,7 +97,27 @@ emitter.on("start", function (session) {
     nc.publish(subject, JSON.stringify(payload));
 });
 
-// let notifyController = await createNotifyController(emitter);
+let notifyController = await createNotifyController(emitter);
+
+// root.addEndpoint("clear", {
+//     handler: async (err, msg) => {
+//         try {
+//             let session = JSON.parse(msg.data);
+//             let clearResults = await clearSeatService.clear(session.session_id);
+//             for (const [area, num] of Object.entries(clearResults)) {
+//                 emitter.emit("clear", session.session_id, area, num);
+//             }
+//             msg.respond(JSON.stringify({ status: "success", result: clearResults }));
+//         } catch (error) {
+//             console.error(error);
+//             msg.respond(JSON.stringify({ status: "error", message: error.message }));
+//         }
+//     },
+//     subject: "*.*.*.clear",
+//     metadata: {
+//         schema: "Clear seats for a session",
+//     },
+// });
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
