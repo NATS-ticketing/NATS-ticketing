@@ -11,31 +11,52 @@ class NotifyController {
     }
 
     async init() {
-        let sessions = await stateService.getSession();
+        // let sessions = await stateService.getSession();
 
+        // sessions.forEach(session => {
+        //     // TODO
+        //     // 計算還要多少(ms)開始售票存進delay (start_time - Date.now() : 0)
+        //     const delay = 0;
+        //     setTimeout(() => {
+        //         startedSessions.push(session.session_id);
+        //         this.emitter.emit('start');
+        //     }, delay);
+        // });
+        // this.startClearingInterval();
+
+        // let sessions = await stateService.getSession();
+        let sessions = [1,2]
         sessions.forEach(session => {
-            // TODO
-            // 計算還要多少(ms)開始售票存進delay (start_time - Date.now() : 0)
-            const delay = 0;
+            const delay = Math.max(new Date(session.start_time) - Date.now(), 0);
             setTimeout(() => {
                 startedSessions.push(session.session_id);
-                this.emitter.emit('start');
+                this.emitter.emit('start', session.session_id);
             }, delay);
         });
-
         this.startClearingInterval();
+
     }
 
     startClearingInterval() {
-        setInterval(() => {
-            startedSessions.forEach(session => {
-                let result = clearSeatService.clear(session);
-                // TODO
-                // emit"各區"結果
-                // this.emitter.emit("clear", session, area, num);
-            });
+        // setInterval(() => {
+        //     startedSessions.forEach(session => {
+        //         let result = clearSeatService.clear(session);
+        //         // TODO
+        //         // emit"各區"結果
+        //         // this.emitter.emit("clear", session, area, num);
+        //     });
 
+        // }, freq);
+
+        setInterval(() => {
+            startedSessions.forEach(async session => {
+                let clearResults = await clearSeatService.clear(session);
+                clearResults.forEach(result => {
+                    this.emitter.emit("clear", session, result.area_id, result.num);
+                });
+            });
         }, freq);
+
     }
 };
 

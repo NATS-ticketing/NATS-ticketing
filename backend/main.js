@@ -69,19 +69,55 @@ root.addEndpoint("snapUp", {
 //     },
 // });
 
+// let emitter = new EventEmitter();
+// emitter.on("clear", function (session, area, num) {
+//     // TODO
+//     // publish to subject: "$(session).notify.$(area)"
+//     // payload {
+//     //     "empty": $(num)
+//     // }
+// });
+// emitter.on("start", function (session) {
+//     // TODO
+//     // publish to subject: "$(session).notify.*",
+// });
+// New clear endpoint
+
 let emitter = new EventEmitter();
+
 emitter.on("clear", function (session, area, num) {
-    // TODO
-    // publish to subject: "$(session).notify.$(area)"
-    // payload {
-    //     "empty": $(num)
-    // }
+    const subject = `${session}.notify.${area}`;
+    const payload = { "empty": num };
+    nc.publish(subject, JSON.stringify(payload));
 });
+
 emitter.on("start", function (session) {
-    // TODO
-    // publish to subject: "$(session).notify.*",
+    const subject = `${session}.notify.*`;
+    const payload = { "message": "Session is starting ticket sales." };
+    nc.publish(subject, JSON.stringify(payload));
 });
+
 let notifyController = await createNotifyController(emitter);
+
+// root.addEndpoint("clear", {
+//     handler: async (err, msg) => {
+//         try {
+//             let session = JSON.parse(msg.data);
+//             let clearResults = await clearSeatService.clear(session.session_id);
+//             for (const [area, num] of Object.entries(clearResults)) {
+//                 emitter.emit("clear", session.session_id, area, num);
+//             }
+//             msg.respond(JSON.stringify({ status: "success", result: clearResults }));
+//         } catch (error) {
+//             console.error(error);
+//             msg.respond(JSON.stringify({ status: "error", message: error.message }));
+//         }
+//     },
+//     subject: "*.*.*.clear",
+//     metadata: {
+//         schema: "Clear seats for a session",
+//     },
+// });
 
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
