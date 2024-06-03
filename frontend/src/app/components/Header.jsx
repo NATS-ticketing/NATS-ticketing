@@ -9,14 +9,22 @@ import {
 import { CiSearch } from "react-icons/ci";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname(); // 使用 usePathname 鉤子
   const [isSelect, setIsSelect] = useState("home");
 
-  function handleClick(page) {
-    setIsSelect(page);
-  }
+  useEffect(() => {
+    if (pathname === "/") {
+      setIsSelect("home");
+    } else if (pathname === "/ticket") {
+      setIsSelect("events");
+    } else if (pathname === "/faq") {
+      setIsSelect("faq");
+    }
+  }, [pathname]);
 
   return (
     <Navbar
@@ -46,19 +54,13 @@ export default function Header() {
 
       <NavbarContent className="flex gap-10" justify="center">
         <NavbarItem isActive={isSelect === "home"}>
-          <Link href="/" onClick={() => handleClick("home")}>
-            Home
-          </Link>
+          <Link href="/">Home</Link>
         </NavbarItem>
         <NavbarItem isActive={isSelect === "events"}>
-          <Link href="/ticket" onClick={() => handleClick("events")}>
-            Events
-          </Link>
+          <Link href="">Events</Link>
         </NavbarItem>
         <NavbarItem isActive={isSelect === "faq"}>
-          <Link href="/" onClick={() => handleClick("faq")}>
-            FAQ
-          </Link>
+          <Link href="">FAQ</Link>
         </NavbarItem>
       </NavbarContent>
 
