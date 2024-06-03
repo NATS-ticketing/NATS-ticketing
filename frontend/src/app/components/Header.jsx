@@ -19,10 +19,12 @@ export default function Header() {
   useEffect(() => {
     if (pathname === "/") {
       setIsSelect("home");
-    } else if (pathname === "/ticket") {
+    } else if (pathname === "/events") {
       setIsSelect("events");
     } else if (pathname === "/faq") {
       setIsSelect("faq");
+    } else {
+      setIsSelect("");
     }
   }, [pathname]);
 
