@@ -8,6 +8,8 @@ import { Button } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
 import { useState } from "react";
 
+const ticketsLeft = 10;
+
 export default function Ticket() {
   return (
     <div>
@@ -59,7 +61,7 @@ function Introduction() {
         </div>
         <div className="grid grid-cols-2 pb-6 items-center">
           <Info title="活動地點" content="國立體育大學綜合體育館" />
-          <Info title="剩餘數量" content="2" hint="text-red-500" />
+          <Info title="剩餘數量" content={ticketsLeft} hint="text-red-500" />
         </div>
         <Info title="主辦單位" content="iMe TW" />
       </div>
@@ -133,7 +135,10 @@ function TicketTable() {
               value={quantity}
               onChange={(event) => setQuantity(Number(event.target.value))}
             >
-              {Array.from({ length: 4 }, (_, i) => i + 1).map((num) => (
+              {Array.from(
+                { length: Math.min(ticketsLeft, 4) },
+                (_, i) => i + 1
+              ).map((num) => (
                 <SelectItem key={num}>{String(num)}</SelectItem>
               ))}
             </Select>

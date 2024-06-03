@@ -51,7 +51,7 @@ export default function Header() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={isSelect === "events"}>
-          <Link href="/" onClick={() => handleClick("events")}>
+          <Link href="/ticket" onClick={() => handleClick("events")}>
             Events
           </Link>
         </NavbarItem>
