@@ -1,0 +1,6 @@
+services:
+  backend:
+    build: .
+    deploy:
+      mode: replicated
+      replicas: 6
