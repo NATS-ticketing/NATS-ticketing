@@ -1,19 +1,13 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider, Image } from "@nextui-org/react";
+import { useState } from "react";
+import Link from "next/link";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-import { useState } from "react";
-
-const carouselImgs = [
-  { id: "1", src: "/bgimg1.jpeg", alt: "aespa LIVE TOUR - SYNK" },
-  { id: "2", src: "/bgimg2.jpeg", alt: "mixer" },
-  { id: "3", src: "/bgimg3.jpeg", alt: "elijah woods" },
-  { id: "4", src: "/bgimg4.jpeg", alt: "imase 1st Asia Tour Shiki" },
-  { id: "5", src: "/bgimg5.jpeg", alt: "Porter Robinson SMILE!" },
-  { id: "6", src: "/bgimg6.jpeg", alt: "Cosmos people" },
-];
+import carouselImgs from "/public/carouselImgs.json";
+import eventsInfo from "/public/eventsInfo.json";
 
 export default function Home() {
   const [currSlide, setCurrSlide] = useState(0);
@@ -26,7 +20,7 @@ export default function Home() {
     <NextUIProvider>
       <div className="">
         <Header />
-        <main className="h-screen bg-gray-100">
+        <main className="bg-gray-100">
           <div>
             <Carousel
               centerMode
@@ -48,9 +42,44 @@ export default function Home() {
               ))}
             </Carousel>
           </div>
+          <div className="flex flex-wrap gap-5 pb-10 mx-10 mt-10">
+            {eventsInfo.map((event) => (
+              <EventCard
+                key={event.imgAlt}
+                imgSrc={event.imgSrc}
+                imgAlt={event.imgAlt}
+                date={event.date}
+                title={event.title}
+              />
+            ))}
+          </div>
         </main>
         <Footer />
       </div>
     </NextUIProvider>
+  );
+}
+
+function EventCard({ imgSrc, imgAlt, date, title }) {
+  return (
+    <div className="min-w-[300px] max-w-[calc(33%-1rem)] p-5">
+      <Link href="/ticket">
+        <div>
+          <Image
+            isZoomed
+            src={imgSrc}
+            alt={imgAlt}
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+        <div className="m-3">
+          <small className="text-default-500">{date}</small>
+          <h4 className="font-bold hover:underline text-large hover:text-amber-500">
+            {title}
+          </h4>
+        </div>
+      </Link>
+    </div>
   );
 }

@@ -1,0 +1,38 @@
+[
+  {
+    "imgSrc": "/eventimg1.jpeg",
+    "imgAlt": "Event Image - ITZY",
+    "date": "2024.07.20 (Sat.)",
+    "title": "ITZY 2ND WORLD TOUR ＜BORN TO BE＞ In TAIPEI"
+  },
+  {
+    "imgSrc": "/eventimg2.jpeg",
+    "imgAlt": "Event Image - Alexander 23",
+    "date": "2024.06.16 (Sun.)",
+    "title": "Alexander 23： ‘American Boy in Asia’ in Taipei"
+  },
+  {
+    "imgSrc": "/eventimg3.png",
+    "imgAlt": "Event Image - Deafheaven",
+    "date": "2024.07.10 (Wed.)",
+    "title": "Deafheaven LIVE IN TAIPEI 2024"
+  },
+  {
+    "imgSrc": "/eventimg4.jpeg",
+    "imgAlt": "Event Image - LANY",
+    "date": "2024.10.04 (Fri.)",
+    "title": "LANY - a beautiful blur: the world tour"
+  },
+  {
+    "imgSrc": "/eventimg5.jpeg",
+    "imgAlt": "Event Image - Chris James",
+    "date": "2024.08.22 (Thu.)",
+    "title": "Chris James：Dopamine Overload Asia Tour 2024"
+  },
+  {
+    "imgSrc": "/eventimg6.jpeg",
+    "imgAlt": "Event Image - Dua Lipa",
+    "date": "2024.11.20 (Wed.)",
+    "title": "Dua Lipa - Radical Optimism Tour"
+  }
+]
