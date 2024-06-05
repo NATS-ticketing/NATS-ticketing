@@ -38,5 +38,19 @@ export const stateService = {
                 message: err.message
             };
         }
+    },
+    getSession: async () => {
+        try {
+            let sessions = await Session.find({}).lean();
+            return sessions.map(session => ({
+                session_id: session.session_id,
+                session_name: session.session_name,
+                start_time: session.start_time.toISOString(),
+                areas: session.areas
+            }));
+        } catch (err) {
+            console.log(err);
+            throw new Error("Failed to fetch sessions");
+        }
     }
 };

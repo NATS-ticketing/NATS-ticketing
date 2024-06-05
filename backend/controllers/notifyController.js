@@ -2,7 +2,8 @@ import { clearSeatService } from "../service/clearSeatService.js";
 import { stateService } from "../service/stateService.js";
 import { errorMessage } from "../util/errorMsg.js";
 
-const freq = 5 * 60 * 1000; // 5 minutes
+// const freq = 5 * 60 * 1000; // 5 minutes
+const freq = 10 * 1000; // 10s
 
 let startedSessions = [];  // [$(session_name)]
 class NotifyController {
@@ -24,8 +25,7 @@ class NotifyController {
         // });
         // this.startClearingInterval();
 
-        // let sessions = await stateService.getSession();
-        let sessions = [1,2]
+        let sessions = await stateService.getSession();
         sessions.forEach(session => {
             const delay = Math.max(new Date(session.start_time) - Date.now(), 0);
             setTimeout(() => {
@@ -35,6 +35,8 @@ class NotifyController {
         });
         this.startClearingInterval();
 
+    } catch (err) {
+        console.error("Error initializing NotifyController:", err);
     }
 
     startClearingInterval() {
@@ -45,15 +47,23 @@ class NotifyController {
         //         // emit"各區"結果
         //         // this.emitter.emit("clear", session, area, num);
         //     });
-
         // }, freq);
 
         setInterval(() => {
             startedSessions.forEach(async session => {
-                let clearResults = await clearSeatService.clear(session);
-                clearResults.forEach(result => {
-                    this.emitter.emit("clear", session, result.area_id, result.num);
-                });
+                try {
+                    let clearResults = await clearSeatService.clear(session);
+                    if (clearResults) {
+                        Object.entries(clearResults).forEach(([area, num]) => {
+                            this.emitter.emit("clear", session, area, num);
+                            // console.log([area, num]);
+                        });
+                    } else {
+                        console.warn(`No clear results for session ${session}`);
+                    }
+                } catch (error) {
+                    console.error(`Error clearing seats for session ${session}:`, error);
+                }
             });
         }, freq);
 

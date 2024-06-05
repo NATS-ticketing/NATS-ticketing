@@ -25,9 +25,9 @@ export const orderService = {
 
             // Validate expiration
             for (let seat of orderSeats) {
-                // console.log("expiration: ", seat.expire);
+                // console.log("expiration: ", Date.parse(seat.expire));
                 // console.log("date: ", Date.now());
-                if (seat.expire < Date.now()) {
+                if (Date.parse(seat.expire) < Date.now()) {
                     return false;
                 }
             }
