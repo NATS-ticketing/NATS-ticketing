@@ -1,8 +1,5 @@
 /**
  * Test notify
- * Usage (type in terminal, in the same directory as this file):
- * NODE_ENV=prod node test_notify.js // connect to our nats
- * node test_notify.js // connect to local nats (.env.test)
 */
 
 import { connect, StringCodec } from "nats";
@@ -10,7 +7,7 @@ import { connect, StringCodec } from "nats";
 import dotenv from 'dotenv';
 
 dotenv.config({
-    path: process.env.NODE_ENV === "prod" ? "../.env" : "../.env.test",
+    path: process.env.NODE_ENV === "test" ? "../.env.test" : "../.env",
 });
 
 console.log(process.env.NATS_URL);

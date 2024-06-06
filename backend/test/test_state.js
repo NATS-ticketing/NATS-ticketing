@@ -6,7 +6,7 @@ import { connect, ServiceError } from "nats";
 import dotenv from 'dotenv';
 
 dotenv.config({
-    path: process.env.NODE_ENV === "prod" ? "../.env" : "../.env.test",
+    path: process.env.NODE_ENV === "test" ? "../.env.test" : "../.env",
 });
 
 const servers = process.env.NATS_URL;
