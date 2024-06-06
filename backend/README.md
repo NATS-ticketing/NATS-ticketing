@@ -19,3 +19,14 @@ npm start
 ```sh
 docker-compose up -d --build
 ```
+
+
+---
+
+## Test
+
+```sh
+cd test
+docker-compose up -d --build # 啟動測試環境
+npm test # 執行測試
+```
