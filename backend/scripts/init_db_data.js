@@ -90,17 +90,16 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
         });
         // MongoBulkWriteError: Error=16500, RetryAfterMs=10, Details='Response status code does not indicate success:
         // TooManyRequests (429); Substatus: 3200; ActivityId: 877400f0-c041-401e-8455-c33e0fa3ef93; Reason: (
+        const insertPerSec = 4000;
+        for (let i = 0; i < seats.length; i += insertPerSec) {
 
-        for (let i = 0; i < seats.length; i += 40) {
-
-            await seatsCollection.insertMany(seats.slice(i, i + 40));
+            await seatsCollection.insertMany(seats.slice(i, i + insertPerSec));
             await new Promise(r => setTimeout(r, 1000));
-            console.log(`Session ${sessionObj.session_name} inserted ${i + 40} seats`);
+            console.log(`Session ${sessionObj.session_name} inserted ${Math.min(seats.length, i + insertPerSec)} seats`);
         }
 
         console.log(`Session ${sessionObj.session_name} inserted`);
     }
 }
-
 
 run().catch(console.dir);
