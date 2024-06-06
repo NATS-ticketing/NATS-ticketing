@@ -3,6 +3,6 @@ services:
     build: .
     deploy:
       mode: replicated
-      replicas: 6
+      replicas: ${REPLICAS:-6} # Default is 6
     env_file:
       - .env
