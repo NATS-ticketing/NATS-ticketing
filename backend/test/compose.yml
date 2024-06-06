@@ -1,0 +1,58 @@
+# Testing environment for the backend service
+networks:
+  test-network:
+
+services:
+
+  backend:
+    build: ../
+    deploy:
+      mode: replicated
+      replicas: 6
+    environment:
+      - MONGO_URL=mongodb://test-mongo-db:27017/
+      - NATS_URL=nats://nats-broker:4222
+    depends_on:
+      nats-broker:
+        condition: service_started
+      test-mongo-db:
+        condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
+    networks:
+      - test-network
+
+  nats-broker:
+    image: "nats:alpine"
+    ports:
+      - "4222:4222" # client port
+      - "6222:6222" # cluster port
+      - "8222:8222" # monitoring port
+    networks:
+      - test-network
+
+  test-mongo-db:
+    image: mongo:5
+    restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    ports:
+      - 27017:27017
+    networks:
+      - test-network
+
+  init-db:
+    build: ../
+    command: ["npm", "run", "init_db"]
+    depends_on:
+      test-mongo-db:
+        condition: service_healthy
+    environment:
+      - MONGO_URL=mongodb://test-mongo-db:27017/
+      - NATS_URL=nats://nats-broker:4222
+    networks:
+      - test-network
+

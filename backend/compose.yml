@@ -4,3 +4,5 @@ services:
     deploy:
       mode: replicated
       replicas: 6
+    env_file:
+      - .env

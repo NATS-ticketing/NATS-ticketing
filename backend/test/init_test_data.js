@@ -1,12 +1,14 @@
 /***
  * 初始化資料庫資料用
  */
-import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
+const MongoClient = require('mongodb').MongoClient;
+const dotenv = require('dotenv');
 
-dotenv.config({ path: '../.env' });
+async function init_test_data() {
+    dotenv.config({
+        path: process.env.NODE_ENV === "prod" ? ".env" : ".env.test",
+    });
 
-async function run() {
     const uri = process.env.MONGO_URL;
     const client = new MongoClient(uri);
 
@@ -102,4 +104,4 @@ async function insertSessionData(sessionsCollection, seatsCollection, sessionObj
     }
 }
 
-run().catch(console.dir);
+module.exports = init_test_data;
