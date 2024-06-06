@@ -8,9 +8,13 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { EventEmitter } from "events";
 
-dotenv.config();
+dotenv.config({
+    path: process.env.NODE_ENV === "prod" ? ".env" : ".env.test",
+});
 
-mongoose.connect(`${process.env.MONGO_URL}/ticketing`, { dbName: "ticketing" })
+console.log(process.env.MONGO_URL);
+
+mongoose.connect(`${process.env.MONGO_URL}`, { dbName: "ticketing" })
     .catch(err => console.log(err));
 
 mongoose.connection.on('connected', () => console.log('Mongo connected'));

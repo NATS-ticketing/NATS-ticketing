@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=prod node main.js",
+    "start_test_env": "NODE_ENV=test node main.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +19,8 @@
     "mongoose": "^8.4.0",
     "nats": "^2.25.0",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
