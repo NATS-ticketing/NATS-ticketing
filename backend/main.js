@@ -41,6 +41,7 @@ const root = srv.addGroup("ticketing");
 root.addEndpoint("state", {
     handler: (err, msg) => {
         // TODO
+        console.log("state request received.");
         stateController.handle(err, msg);
     },
     subject: "*.state",
@@ -51,7 +52,7 @@ root.addEndpoint("state", {
 
 root.addEndpoint("snapUp", {
     handler: (err, msg) => {
-        // TODO
+        console.log("snapUp request received.");
         snapUpController.handle(err, msg);
     },
     subject: "*.*.snapUp",
@@ -90,13 +91,15 @@ root.addEndpoint("snapUp", {
 let emitter = new EventEmitter();
 
 emitter.on("clear", function (session, area, num) {
-    const subject = `${session}.notify.${area}`;
+    console.log("receive clear event", session, area, num);
+    const subject = `ticketing.${session}.notify.${area}`;
     const payload = { "empty": num };
     nc.publish(subject, JSON.stringify(payload));
 });
 
 emitter.on("start", function (session) {
-    const subject = `${session}.notify.*`;
+    console.log("receive start event", session,);
+    const subject = `ticketing.${session}.notify.*`;
     const payload = { "message": "Session is starting ticket sales." };
     nc.publish(subject, JSON.stringify(payload));
 });
@@ -123,9 +126,11 @@ let notifyController = await createNotifyController(emitter);
 //     },
 // });
 
+
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
         // TODO
+        console.log("confirm request received.");
         confirmController.handle(err, msg);
     },
     subject: "*.*.*.confirm",
@@ -136,7 +141,7 @@ root.addEndpoint("confirm", {
 
 root.addEndpoint("cancel", {
     handler: (err, msg) => {
-        // TODO
+        console.log("cancel request received.");
         cancelController.handle(err, msg);
     },
     subject: "*.*.*.cancel",
