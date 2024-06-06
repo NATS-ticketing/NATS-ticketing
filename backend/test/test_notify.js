@@ -1,6 +1,10 @@
 /**
- * Justa a simplet client test our server should respond something
- */
+ * Test notify
+ * Usage (type in terminal, in the same directory as this file):
+ * NODE_ENV=prod node test_notify.js // connect to our nats
+ * node test_notify.js // connect to local nats (.env.test)
+*/
+
 import { connect, StringCodec } from "nats";
 
 import dotenv from 'dotenv';
@@ -24,6 +28,15 @@ console.log(JSON.stringify(res.json(), null, 2));
 
 
 // Subscribe to notify
+await nc.subscribe("ticketing.1.notify.1", {
+    callback: (err, msg) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log("got notify", msg.json());
+    }
+});
+
 await nc.subscribe("ticketing.1.notify.2", {
     callback: (err, msg) => {
         if(err) {
