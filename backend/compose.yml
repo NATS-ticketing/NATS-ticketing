@@ -6,3 +6,10 @@ services:
       replicas: ${REPLICAS:-6} # Default is 6
     env_file:
       - .env
+  
+  backend-clear:
+    build:
+      context: .
+      dockerfile: Dockerfile.clear
+    env_file:
+      - .env
