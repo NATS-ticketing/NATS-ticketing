@@ -14,7 +14,7 @@ docker-compose up -d --build
 ```
 
 
-如果需要指定 server 數量，：
+（ps. 如果有什麼特別狀況，需要指定 server 數量）：
 ```sh
 # 啟動 1 個 server
 REPLICAS=1 docker-compose up -d --build
