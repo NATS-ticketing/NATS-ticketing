@@ -56,6 +56,7 @@ describe("test some API", () => {
         expect(rSnap.json().status).toBe("success");
         expect(seats).toHaveLength(tickets);
         expect(rSnap.json().seat_status).toBe(PENDING);
+        expect(rSnap.json().price).toBe(4000);
         
         // 搶票後有 n 張票進入 pending 狀態
         let rState = await queryState(session);

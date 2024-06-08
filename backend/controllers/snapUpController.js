@@ -1,5 +1,8 @@
 import { snapUpService } from "../service/snapUpService.js";
+import { priceService } from "../service/priceService.js";
 import { errorMessage } from "../util/errorMsg.js";
+
+priceService.init();
 
 export const snapUpController = {
     handle: async (err, msg) => {
@@ -12,6 +15,7 @@ export const snapUpController = {
 
             const session = msg.subject.split(".")[1];
             const area = msg.subject.split(".")[2];
+            const price = priceService.getPrice(session, area);
             const count = JSON.parse(msg.data).count;
             const result = await snapUpService.bookSeat(session, area, count);
 
@@ -30,6 +34,7 @@ export const snapUpController = {
                     "order": result.order_id,
                     "session_id": result.session_id,
                     "area_id": result.area_id,
+                    "price": price,
                     "seats": result.seats,
                     "seat_status": result.seat_status
                 }));
