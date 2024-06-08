@@ -21,7 +21,7 @@ module.exports = {
             foreground: "#000",
             primary: {
               foreground: "#000",
-              DEFAULT: "#FBD04F",
+              DEFAULT: "#FBBF24",
             },
           },
         },

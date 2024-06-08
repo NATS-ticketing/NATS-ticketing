@@ -1,162 +1,60 @@
 "use client";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import React, { useEffect } from "react";
-import { Select, SelectItem } from "@nextui-org/react";
-import { Divider } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import { Checkbox } from "@nextui-org/react";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import { Select, SelectItem, Button, Checkbox } from "@nextui-org/react";
+import Introduction from "@/app/components/Introduction";
+import TicketArea from "@/app/components/TicketArea";
+import Link from "next/link";
 
 const ticketsLeft = 2;
 
 export default function Ticket() {
+  const [quantity, setQuantity] = useState("1");
+
   return (
     <div>
       <Header />
       <main className="flex grid grid-cols-5 gap-8 px-20 py-16 bg-gray-100">
         <div className="col-span-3">
-          <Introduction />
+          <Introduction ticketsLeft={ticketsLeft} />
 
-          {ticketsLeft > 0 ? <TicketArea /> : <TicketsSoldOut />}
+          {ticketsLeft > 0 ? (
+            <TicketArea
+              th1="票種"
+              th2="金額(NT$)"
+              th3="購買張數"
+              td1="VIP1"
+              td2="6888"
+              td3={
+                <Select
+                  label="選擇張數"
+                  variant="bordered"
+                  size="sm"
+                  className="w-1/2"
+                  defaultSelectedKeys="1"
+                  value={quantity}
+                  onChange={(event) => setQuantity(Number(event.target.value))}
+                >
+                  {Array.from(
+                    { length: Math.min(ticketsLeft, 4) },
+                    (_, i) => i + 1
+                  ).map((num) => (
+                    <SelectItem key={num}>{String(num)}</SelectItem>
+                  ))}
+                </Select>
+              }
+            />
+          ) : (
+            <TicketsSoldOut />
+          )}
+          <ConfirmArea />
         </div>
         <div className="col-span-2 pt-20">
           <img src="/aespa-seat.png" alt="aespa-seat" />
         </div>
       </main>
       <Footer />
-    </div>
-  );
-}
-
-function Introduction() {
-  const seats = [
-    { key: "VIP1 $6888", label: "VIP1 $6888" },
-    { key: "VIP2 $4888", label: "VIP2 $4888" },
-    { key: "VIP3 $2888", label: "VIP3 $2888" },
-  ];
-
-  return (
-    <div className="mb-10">
-      <p className="pb-8 text-2xl font-bold">
-        2024 aespa LIVE TOUR - SYNK : PARALLEL LINE in TAIPEI 
-      </p>
-      <div>
-        <div className="grid items-center grid-cols-2 pb-6">
-          <Info title="開始時間" content="2024/08/10 (六) 7:00PM" />
-          <div>
-            <span className="mr-6 font-medium text-gray-500">票區</span>
-            <Select
-              label="選擇票區"
-              className="w-2/3 bordered"
-              variant="bordered"
-              size="sm"
-              defaultSelectedKeys={seats.length && [seats[0].key]}
-            >
-              {seats.map((seat) => (
-                <SelectItem key={seat.key}>{seat.label}</SelectItem>
-              ))}
-            </Select>
-          </div>
-        </div>
-        <div className="grid items-center grid-cols-2 pb-6">
-          <Info title="活動地點" content="國立體育大學綜合體育館" />
-          <Info
-            title="剩餘數量"
-            content={ticketsLeft}
-            hint="text-red-600 font-bold"
-          />
-        </div>
-        <Info title="主辦單位" content="iMe TW" />
-      </div>
-    </div>
-  );
-}
-
-function Info({ title, content, hint }) {
-  return (
-    <div>
-      <span className="mr-6 font-medium text-gray-500">{title}</span>
-      <span className={hint ? hint : ""}>{content}</span>
-    </div>
-  );
-}
-
-function TicketArea() {
-  const [quantity, setQuantity] = useState("1");
-
-  return (
-    <>
-      <StepsBar />
-      <table className="w-full pr-5 mt-12 table-fixed">
-        <thead className="w-full h-12 pr-5 bg-gray-300">
-          <tr>
-            <th>票種</th>
-            <th>金額(NT$)</th>
-            <th>購買張數</th>
-          </tr>
-        </thead>
-        <tbody className="w-full border-b-2 border-black">
-          <tr className="h-28">
-            <td className="font-medium text-center align-middle">VIP1</td>
-            <td className="font-medium text-center align-middle">6888</td>
-            <td className="font-medium text-center align-middle">
-              <Select
-                label="選擇張數"
-                variant="bordered"
-                size="sm"
-                className="w-1/2"
-                defaultSelectedKeys="1"
-                value={quantity}
-                onChange={(event) => setQuantity(Number(event.target.value))}
-              >
-                {Array.from(
-                  { length: Math.min(ticketsLeft, 4) },
-                  (_, i) => i + 1
-                ).map((num) => (
-                  <SelectItem key={num}>{String(num)}</SelectItem>
-                ))}
-              </Select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <ConfirmArea />
-    </>
-  );
-}
-
-function StepsBar() {
-  const pathname = usePathname();
-  const [step, setStep] = useState(1);
-
-  useEffect(() => {
-    if (pathname === "/ticket") {
-      setStep(1);
-    } else if (pathname === "/order") {
-      setStep(2);
-    }
-  });
-
-  return (
-    <div className="flex items-center w-full">
-      <Step order="1" text="選擇票種" step={step} />
-      <Divider className="w-2/4 bg-black h-0.5" />
-      <Step order="2" text="取票繳費" step={step} />
-    </div>
-  );
-}
-
-function Step({ order, text, step }) {
-  return (
-    <div
-      className={`flex ${
-        step == order ? "bg-amber-400" : "bg-gray-300"
-      } p-2 rounded-3xl w-1/4 border-2 border-black items-center gap-3`}
-    >
-      <div className="px-3 py-1 font-medium bg-white rounded-full">{order}</div>
-      <p className="font-medium">{text}</p>
     </div>
   );
 }
@@ -172,9 +70,14 @@ function ConfirmArea() {
         </p>
       </Checkbox>
       <div className="flex justify-center w-full mt-10">
-        <Button radius="none" size="lg" className="font-bold bg-amber-400">
-          確認張數
-        </Button>
+        <Link href="/order">
+          {/* <Button radius="none" size="lg" className="font-bold bg-amber-400">
+            確認張數
+          </Button> */}
+          <Button color="primary" size="lg" radius="sm" className="font-bold">
+            確認張數
+          </Button>
+        </Link>
       </div>
     </div>
   );
