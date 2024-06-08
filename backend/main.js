@@ -3,10 +3,8 @@ import { stateController } from "./controllers/stateController.js";
 import { snapUpController } from "./controllers/snapUpController.js";
 import { confirmController } from "./controllers/confirmController.js";
 import { cancelController } from "./controllers/cancelController.js";
-import { createNotifyController } from "./controllers/notifyController.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { EventEmitter } from "events";
 
 dotenv.config({
     path: process.env.NODE_ENV === "prod" ? ".env" : ".env.test",
