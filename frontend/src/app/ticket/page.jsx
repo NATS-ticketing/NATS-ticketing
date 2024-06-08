@@ -1,26 +1,27 @@
 "use client";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import React from "react";
+import React, { useEffect } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 import { Divider } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
-const ticketsLeft = 0;
+const ticketsLeft = 2;
 
 export default function Ticket() {
   return (
     <div>
       <Header />
-      <main className="bg-gray-100 flex py-16 px-20 grid grid-cols-5 gap-8">
+      <main className="flex grid grid-cols-5 gap-8 px-20 py-16 bg-gray-100">
         <div className="col-span-3">
           <Introduction />
 
           {ticketsLeft > 0 ? <TicketArea /> : <TicketsSoldOut />}
         </div>
-        <div className="pt-20 col-span-2">
+        <div className="col-span-2 pt-20">
           <img src="/aespa-seat.png" alt="aespa-seat" />
         </div>
       </main>
@@ -38,14 +39,14 @@ function Introduction() {
 
   return (
     <div className="mb-10">
-      <p className="text-2xl font-bold pb-8">
+      <p className="pb-8 text-2xl font-bold">
         2024 aespa LIVE TOUR - SYNK : PARALLEL LINE in TAIPEI 
       </p>
       <div>
-        <div className="grid grid-cols-2 pb-6 items-center">
+        <div className="grid items-center grid-cols-2 pb-6">
           <Info title="開始時間" content="2024/08/10 (六) 7:00PM" />
           <div>
-            <span className="mr-6 text-gray-500 font-medium">票區</span>
+            <span className="mr-6 font-medium text-gray-500">票區</span>
             <Select
               label="選擇票區"
               className="w-2/3 bordered"
@@ -59,7 +60,7 @@ function Introduction() {
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-2 pb-6 items-center">
+        <div className="grid items-center grid-cols-2 pb-6">
           <Info title="活動地點" content="國立體育大學綜合體育館" />
           <Info
             title="剩餘數量"
@@ -76,7 +77,7 @@ function Introduction() {
 function Info({ title, content, hint }) {
   return (
     <div>
-      <span className="mr-6 text-gray-500 font-medium">{title}</span>
+      <span className="mr-6 font-medium text-gray-500">{title}</span>
       <span className={hint ? hint : ""}>{content}</span>
     </div>
   );
@@ -88,8 +89,8 @@ function TicketArea() {
   return (
     <>
       <StepsBar />
-      <table className="w-full table-fixed mt-12 pr-5">
-        <thead className="w-full h-12 bg-gray-300 pr-5">
+      <table className="w-full pr-5 mt-12 table-fixed">
+        <thead className="w-full h-12 pr-5 bg-gray-300">
           <tr>
             <th>票種</th>
             <th>金額(NT$)</th>
@@ -98,9 +99,9 @@ function TicketArea() {
         </thead>
         <tbody className="w-full border-b-2 border-black">
           <tr className="h-28">
-            <td className="text-center align-middle font-medium">VIP1</td>
-            <td className="text-center align-middle font-medium">6888</td>
-            <td className="text-center align-middle font-medium">
+            <td className="font-medium text-center align-middle">VIP1</td>
+            <td className="font-medium text-center align-middle">6888</td>
+            <td className="font-medium text-center align-middle">
               <Select
                 label="選擇張數"
                 variant="bordered"
@@ -127,32 +128,34 @@ function TicketArea() {
 }
 
 function StepsBar() {
+  const pathname = usePathname();
   const [step, setStep] = useState(1);
 
-  function handleClick(num) {
-    setStep(num);
-  }
+  useEffect(() => {
+    if (pathname === "/ticket") {
+      setStep(1);
+    } else if (pathname === "/order") {
+      setStep(2);
+    }
+  });
 
   return (
-    <div className="flex w-full items-center">
-      <Step order="1" text="選擇票種" step={step} handleClick={handleClick} />
+    <div className="flex items-center w-full">
+      <Step order="1" text="選擇票種" step={step} />
       <Divider className="w-2/4 bg-black h-0.5" />
-      <Step order="2" text="取票繳費" step={step} handleClick={handleClick} />
+      <Step order="2" text="取票繳費" step={step} />
     </div>
   );
 }
 
-function Step({ order, text, step, handleClick }) {
+function Step({ order, text, step }) {
   return (
     <div
       className={`flex ${
         step == order ? "bg-amber-400" : "bg-gray-300"
       } p-2 rounded-3xl w-1/4 border-2 border-black items-center gap-3`}
-      onClick={() => handleClick(order)}
     >
-      <div className="bg-white rounded-full rounded-full px-3 py-1 font-medium">
-        {order}
-      </div>
+      <div className="px-3 py-1 font-medium bg-white rounded-full">{order}</div>
       <p className="font-medium">{text}</p>
     </div>
   );
@@ -168,8 +171,8 @@ function ConfirmArea() {
           <span className="text-amber-600 hover:underline">隱私權政策</span>。
         </p>
       </Checkbox>
-      <div className="flex w-full justify-center mt-10">
-        <Button radius="none" size="lg" className="bg-amber-400 font-bold">
+      <div className="flex justify-center w-full mt-10">
+        <Button radius="none" size="lg" className="font-bold bg-amber-400">
           確認張數
         </Button>
       </div>
@@ -180,7 +183,7 @@ function ConfirmArea() {
 function TicketsSoldOut() {
   return (
     <div className="flex flex-col items-center mt-10">
-      <div className="flex flex-col justify-center items-center w-9/12 h-48 bg-gray-300 space-y-2">
+      <div className="flex flex-col items-center justify-center w-9/12 h-48 space-y-2 bg-gray-300">
         <p className="font-bold">您選擇的票區目前已售完，請選擇其他票區。</p>
         <p className="font-bold">
           您可以選擇訂閱該區的釋票通知，若有釋票，系統將會通知您。
@@ -189,7 +192,7 @@ function TicketsSoldOut() {
           * 釋票通知只會通知您目前所選的票區
         </p>
       </div>
-      <Button radius="none" size="lg" className="bg-amber-400 font-bold mt-10">
+      <Button radius="none" size="lg" className="mt-10 font-bold bg-amber-400">
         釋票通知訂閱
       </Button>
     </div>
