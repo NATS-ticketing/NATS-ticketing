@@ -35,7 +35,7 @@ async function run() {
       start_time: new_start_time,
       areas: [
         { area_id: 1, area_name: "VIP 1", price: 6888, max_seats: 100 },
-        { area_id: 2, area_name: "VIP 2", price: 6888, max_seats: 120 },
+        { area_id: 2, area_name: "VIP 2", price: 6888, max_seats: 0 },
         { area_id: 3, area_name: "特A區", price: 6600, max_seats: 130 },
         { area_id: 4, area_name: "特B區", price: 6600, max_seats: 140 },
         { area_id: 5, area_name: "藍1A-1", price: 5800, max_seats: 150 },
