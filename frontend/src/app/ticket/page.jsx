@@ -1,8 +1,14 @@
 "use client";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import React, { useState } from "react";
-import { Select, SelectItem, Button, Checkbox } from "@nextui-org/react";
+import React, { useState, useEffect } from "react";
+import {
+  Select,
+  SelectItem,
+  Button,
+  Checkbox,
+  CircularProgress,
+} from "@nextui-org/react";
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
 import Link from "next/link";
@@ -11,13 +17,70 @@ const ticketsLeft = 2;
 
 export default function Ticket() {
   const [quantity, setQuantity] = useState("1");
+  const [ticketsLeft, setTicketsLeft] = useState(0);
+  const [seats, setSeats] = useState([]);
+  const [selectedSeat, setSelectedSeat] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    async function fetchTicketState() {
+      setIsLoading(true);
+      setHasError(false);
+      try {
+        const response = await fetch(`/api/ticketState?session=1`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setSeats(data.state.state.areas);
+        const initialSeat = data.state.state.areas.find(
+          (seat) => seat.id === 1
+        );
+        if (initialSeat) {
+          setTicketsLeft(initialSeat.empty);
+        }
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error:", err);
+        setHasError(true);
+      }
+    }
+
+    fetchTicketState();
+  }, []);
+
+  if (isLoading || hasError) {
+    return (
+      <div>
+        <Header />
+        <div className="flex justify-center items-center h-screen">
+          <CircularProgress size="lg" aria-label="Loading..." />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const handleSeatChange = (selectedKey) => {
+    setSelectedSeat(selectedKey);
+    const selectedSeat = seats.find((seat) => seat.id === selectedKey);
+    if (selectedSeat) {
+      setTicketsLeft(selectedSeat.empty);
+    }
+  };
 
   return (
     <div>
       <Header />
       <main className="flex grid grid-cols-5 gap-8 px-20 py-16 bg-gray-100">
         <div className="col-span-3">
-          <Introduction ticketsLeft={ticketsLeft} />
+          <Introduction
+            ticketsLeft={ticketsLeft}
+            seats={seats}
+            selectedSeat={selectedSeat}
+            handleSeatChange={handleSeatChange}
+          />
 
           {ticketsLeft > 0 ? (
             <TicketArea
