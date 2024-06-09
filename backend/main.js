@@ -21,6 +21,7 @@ mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
 const servers = process.env.NATS_URL;
 const nc = await connect({
     servers: servers.split(","),
+    debug: true,
 });
 
 // Use NATS service API

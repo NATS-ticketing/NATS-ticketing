@@ -16,7 +16,7 @@ export const clearSeatService = {
                 "expire": { $lt: Date.now() },
             });
 
-            console.log(expiredSeats);
+            // console.log(expiredSeats);
 
             // Update expired seats 
             await Seat.updateMany(

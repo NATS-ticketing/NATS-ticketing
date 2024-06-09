@@ -22,12 +22,13 @@ mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
 const servers = process.env.NATS_URL;
 const nc = await connect({
     servers: servers.split(","),
+    // debug: true,
 });
 
 let emitter = new EventEmitter();
 
 emitter.on("clear", function (session, area, num) {
-    console.log("receive clear event", session, area, num);
+    // console.log("receive clear event", session, area, num);
     const subject = `ticketing.${session}.notify.${area}`;
     const payload = { "empty": num };
     nc.publish(subject, JSON.stringify(payload));
