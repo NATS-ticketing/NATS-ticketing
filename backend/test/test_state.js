@@ -15,7 +15,7 @@ const nc = await connect({
     servers: servers.split(","),
 });
 
-let r = await nc.request("ticketing.1.state", "", { timeout: 2000 });
+let r = await nc.request("ticketing.1.state", "", { timeout: 5000 });
 console.log(JSON.stringify(r.json(), null, 2));
 
 await nc.drain();
