@@ -62,9 +62,11 @@ export default function Ticket() {
     );
   }
 
-  const handleSeatChange = (selectedKey) => {
-    setSelectedSeat(selectedKey);
-    const selectedSeat = seats.find((seat) => seat.id === selectedKey);
+  const handleSeatChange = (selectedKeys) => {
+    const selectedKey = Array.from(selectedKeys)[0];
+    const selectedValue = parseInt(selectedKey, 10);
+    setSelectedSeat(selectedValue);
+    const selectedSeat = seats.find((seat) => seat.id === selectedValue);
     if (selectedSeat) {
       setTicketsLeft(selectedSeat.empty);
     }

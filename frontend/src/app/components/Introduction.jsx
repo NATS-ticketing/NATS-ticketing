@@ -26,8 +26,11 @@ export default function Introduction({
                 className="w-2/3 bordered"
                 variant="bordered"
                 size="sm"
-                value={selectedSeat.toString()}
-                onChange={(event) => handleSeatChange(Number(event.currentKey))}
+                selectedKeys={[selectedSeat.toString()]}
+                onChange={(keys) => {
+                  console.log("Selected keys:", keys.target.value);
+                  handleSeatChange(keys.target.value);
+                }}
               >
                 {seats.map((seat) => (
                   <SelectItem
