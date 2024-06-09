@@ -2,13 +2,13 @@
 import { Select, SelectItem } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 
-export default function Introduction({ ticketsLeft }) {
+export default function Introduction({
+  ticketsLeft,
+  seats,
+  selectedSeat,
+  handleSeatChange,
+}) {
   const pathname = usePathname();
-  const seats = [
-    { key: "VIP1 $6888", label: "VIP1 $6888" },
-    { key: "VIP2 $4888", label: "VIP2 $4888" },
-    { key: "VIP3 $2888", label: "VIP3 $2888" },
-  ];
 
   return (
     <div>
@@ -26,10 +26,13 @@ export default function Introduction({ ticketsLeft }) {
                 className="w-2/3 bordered"
                 variant="bordered"
                 size="sm"
-                defaultSelectedKeys={seats.length && [seats[0].key]}
+                value={selectedSeat.toString()}
+                onChange={(event) => handleSeatChange(Number(event.currentKey))}
               >
                 {seats.map((seat) => (
-                  <SelectItem key={seat.key}>{seat.label}</SelectItem>
+                  <SelectItem
+                    key={seat.id}
+                  >{`${seat.name} $${seat.price}`}</SelectItem>
                 ))}
               </Select>
             </div>
