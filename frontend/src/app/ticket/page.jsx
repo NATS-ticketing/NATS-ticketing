@@ -12,6 +12,7 @@ import {
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
 import Link from "next/link";
+import { requestTicketState } from "@/app/lib/natsClient";
 
 const ticketsLeft = 2;
 
@@ -28,7 +29,7 @@ export default function Ticket() {
       setIsLoading(true);
       setHasError(false);
       try {
-        const response = await fetch(`/api/ticketState?session=1`);
+        const response = await requestTicketState(1);
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
