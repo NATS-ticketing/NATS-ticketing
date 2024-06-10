@@ -6,6 +6,7 @@ import { createNotifyController } from "./controllers/notifyController.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { EventEmitter } from "events";
+import { initAreaInfoService } from "./service/areaInfoService.js";
 
 dotenv.config({
     path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
@@ -27,10 +28,14 @@ const nc = await connect({
 
 let emitter = new EventEmitter();
 
-emitter.on("clear", function (session, area, num) {
-    // console.log("receive clear event", session, area, num);
+await initAreaInfoService();
+
+emitter.on("clear", function (session, area, area_name, num) {
     const subject = `ticketing.${session}.notify.${area}`;
-    const payload = { "empty": num };
+    const payload = { 
+        "area_name": area_name,
+        "empty": num 
+    };
     nc.publish(subject, JSON.stringify(payload));
 });
 

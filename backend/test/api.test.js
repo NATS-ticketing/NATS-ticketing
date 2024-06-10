@@ -21,7 +21,7 @@ describe("test some API", () => {
 
     beforeAll(async () => {
         nc = await connect({ servers: process.env.NATS_URL });
-        console.log("connected to NATS");
+        console.log("connected to NATS url", process.env.NATS_URL);
     });
     
     afterAll(async () => {
@@ -36,7 +36,7 @@ describe("test some API", () => {
     
     test("state, snapup, confirm", async () => {
         const session = 1;
-        const area = 2;
+        const area = 1;
         console.log("session: ", session);
         
         let rStateInit = await nc.request(`ticketing.${session}.state`);
@@ -56,7 +56,7 @@ describe("test some API", () => {
         expect(rSnap.json().status).toBe("success");
         expect(seats).toHaveLength(tickets);
         expect(rSnap.json().seat_status).toBe(PENDING);
-        expect(rSnap.json().price).toBe(4000);
+        expect(rSnap.json().price).toBe(6888);
         
         // 搶票後有 n 張票進入 pending 狀態
         let rState = await queryState(session);
@@ -77,7 +77,7 @@ describe("test some API", () => {
 
     test("state, snapup, cancel", async () => {
         const session = 1;
-        const area = 2;
+        const area = 1;
         console.log("session: ", session);
         
         //確認資料庫沒動過，如果錯了，先執行 npm run init_db 重置資料庫
@@ -86,7 +86,7 @@ describe("test some API", () => {
         for (let area of rStateInit.json().state.areas) {
             expect(area.total).toBe(area.empty);
         }
-        console.log(JSON.stringify(rStateInit.json(), null, 2));
+        // console.log(JSON.stringify(rStateInit.json(), null, 2));
 
         // 搶 n 張票
         const tickets = 2;

@@ -1,3 +1,4 @@
+import { getAreaInfoService } from "../service/areaInfoService.js";
 import { clearSeatService } from "../service/clearSeatService.js";
 import { stateService } from "../service/stateService.js";
 import { errorMessage } from "../util/errorMsg.js";
@@ -55,7 +56,11 @@ class NotifyController {
                     let clearResults = await clearSeatService.clear(session);
                     if (clearResults) {
                         Object.entries(clearResults).forEach(([area, num]) => {
-                            this.emitter.emit("clear", session, area, num);
+                            let area_name = getAreaInfoService().getAreaName(session, area);
+                            if(num > 0) { // only emit if there are empty seats
+                                this.emitter.emit("clear", session, area, area_name, num);
+                            }
+                            
                             // console.log([area, num]);
                         });
                     } else {

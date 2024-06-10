@@ -3,6 +3,7 @@ import { stateController } from "./controllers/stateController.js";
 import { snapUpController } from "./controllers/snapUpController.js";
 import { confirmController } from "./controllers/confirmController.js";
 import { cancelController } from "./controllers/cancelController.js";
+import { initAreaInfoService } from "./service/areaInfoService.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
@@ -34,6 +35,8 @@ const srv = await nc.services.add({
 srv.stopped.then((err) => {
     console.log(`service stopped ${err ? err.message : ""}`);
 });
+
+await initAreaInfoService();
 
 const root = srv.addGroup("ticketing");
 
