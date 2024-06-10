@@ -3,14 +3,17 @@ import { stateController } from "./controllers/stateController.js";
 import { snapUpController } from "./controllers/snapUpController.js";
 import { confirmController } from "./controllers/confirmController.js";
 import { cancelController } from "./controllers/cancelController.js";
-import { createNotifyController } from "./controllers/notifyController.js";
+import { initAreaInfoService } from "./service/areaInfoService.js";
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { EventEmitter } from "events";
 
-dotenv.config();
+dotenv.config({
+    path: process.env.NODE_ENV === "prod" ? ".env" : ".env.test",
+});
 
-mongoose.connect(`${process.env.MONGO_URL}/ticketing`, { dbName: "ticketing" })
+console.log(process.env.MONGO_URL);
+
+mongoose.connect(`${process.env.MONGO_URL}`, { dbName: "ticketing" })
     .catch(err => console.log(err));
 
 mongoose.connection.on('connected', () => console.log('Mongo connected'));
@@ -19,6 +22,7 @@ mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
 const servers = process.env.NATS_URL;
 const nc = await connect({
     servers: servers.split(","),
+    debug: true,
 });
 
 // Use NATS service API
@@ -32,11 +36,14 @@ srv.stopped.then((err) => {
     console.log(`service stopped ${err ? err.message : ""}`);
 });
 
+await initAreaInfoService();
+
 const root = srv.addGroup("ticketing");
 
 root.addEndpoint("state", {
     handler: (err, msg) => {
         // TODO
+        console.log("state request received.");
         stateController.handle(err, msg);
     },
     subject: "*.state",
@@ -47,7 +54,7 @@ root.addEndpoint("state", {
 
 root.addEndpoint("snapUp", {
     handler: (err, msg) => {
-        // TODO
+        console.log("snapUp request received.");
         snapUpController.handle(err, msg);
     },
     subject: "*.*.snapUp",
@@ -56,36 +63,10 @@ root.addEndpoint("snapUp", {
     },
 });
 
-
-// TODO: 這裡要 發布通知 可能不是直接加入 endpoint
-// root.addEndpoint("notify", {
-//     handler: (err, msg) => {
-//         // TODO
-
-//     },
-//     subject: "*.notify.*",
-//     metadata: {
-//         schema: "Notify a session is going to sell tickets",
-//     },
-// });
-
-let emitter = new EventEmitter();
-emitter.on("clear", function (session, area, num) {
-    // TODO
-    // publish to subject: "$(session).notify.$(area)"
-    // payload {
-    //     "empty": $(num)
-    // }
-});
-emitter.on("start", function (session) {
-    // TODO
-    // publish to subject: "$(session).notify.*",
-});
-let notifyController = await createNotifyController(emitter);
-
 root.addEndpoint("confirm", {
     handler: (err, msg) => {
         // TODO
+        console.log("confirm request received.");
         confirmController.handle(err, msg);
     },
     subject: "*.*.*.confirm",
@@ -96,7 +77,7 @@ root.addEndpoint("confirm", {
 
 root.addEndpoint("cancel", {
     handler: (err, msg) => {
-        // TODO
+        console.log("cancel request received.");
         cancelController.handle(err, msg);
     },
     subject: "*.*.*.cancel",

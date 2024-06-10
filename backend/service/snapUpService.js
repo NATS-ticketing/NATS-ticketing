@@ -2,6 +2,7 @@ import Seat from '../models/seatModel.js'
 import { v4 as uuidv4 } from 'uuid';
 
 const expireTime = 3 * 60 * 1000; // 3 minutes
+// const expireTime = 3 * 60 * 1000 * 1000000; // 3 minutes
 export const snapUpService = {
     bookSeat: async (session, area, count) => {
         try {
@@ -18,6 +19,7 @@ export const snapUpService = {
             const selectedSeats = seats.slice(0, count);
             const order_id = uuidv4();
             const expire_time = Date.now() + expireTime;
+            // const expire_time = Date.now() - expireTime;
             await Seat.updateMany(
                 {
                     "session_id": Number(session),
@@ -28,7 +30,7 @@ export const snapUpService = {
                 {
                     $set: {
                         "seat_status": 1,
-                        "token": order_id,
+                        "order": order_id,
                         "expire": expire_time
                     },
                 }
@@ -37,11 +39,17 @@ export const snapUpService = {
             let orderSeats = await Seat.find({
                 "session_id": Number(session),
                 "area_id": Number(area),
-                "token": order_id,
+                "order": order_id,
                 "seat_status": 1,
             });
 
-            return orderSeats;
+            return {
+                order_id: order_id,
+                session_id: Number(session),
+                area_id: Number(area),
+                seats: orderSeats.map(seat => seat.seat),
+                seat_status: 1
+            }
 
         } catch (err) {
             console.log(err);

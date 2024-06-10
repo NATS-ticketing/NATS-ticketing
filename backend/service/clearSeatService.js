@@ -3,11 +3,6 @@ import Seat from '../models/seatModel.js'
 export const clearSeatService = {
     clear: async (session) => {
         try {
-            let seats = await Seat.find({
-                "session_id": Number(session),
-                "seat_status": 1
-            });
-
             // TODO
             // 確認每個座位的expire是否在有效期內 
             // 期效內的移除
@@ -15,30 +10,25 @@ export const clearSeatService = {
             // return 各區張數
             // e.g. {1: 10, 2: 20, 3: 30}
 
-            // Reset their status ($lte:<= , $lt:< , $in:in array)
-            let result = await Seat.updateMany(
+            let expiredSeats = await Seat.find({
+                "session_id": Number(session),
+                "seat_status": 1,
+                "expire": { $lt: Date.now() },
+            });
+
+            // console.log(expiredSeats);
+
+            // Update expired seats 
+            await Seat.updateMany(
                 {
-                    session_id: Number(session),
-                    seat_status: 1,
-                    expire: { $lt: Date.now() }
+                    "seat": { $in: expiredSeats.map(seat => seat.seat) },
                 },
                 {
-                    $set: { seat_status: 0, expire: null, order: null }
+                    $set: { "seat_status": 0, "expire": null, "order": null },
                 }
             );
 
-            // Update only the expired seats to reset their status
-            // let expiredSeatIds = expiredSeats.map(seat => seat._id);
-            // let result = await Seat.updateMany(
-            // {
-            //     _id: { $in: expiredSeatIds },
-            // },
-            // {
-            //     $set: { seat_status: 0, expire: null, order: null }
-            // }
-            // );
-
-            // Calculate and return available tickets per area
+            // Return available tickets per area
             let seatsAfterClear = await Seat.find({
                 session_id: Number(session),
                 seat_status: 0
