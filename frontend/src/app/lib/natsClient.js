@@ -1,3 +1,4 @@
+"use server";
 import { connect, StringCodec } from "nats";
 
 let nc;
@@ -19,11 +20,10 @@ const sc = StringCodec(); // Used for encoding and decoding string messages
 export async function requestTicketState(session) {
   try {
     const nc = await getNatsClient();
-    // const subject = `ticketing.${session}.state`;
+    const subject = `ticketing.${session}.state`;
 
-    const msg = await nc.request("ticketing.1.state", "", { timeout: 20000 });
+    const msg = await nc.request(subject, "", { timeout: 20000 });
     console.log("msg:" + JSON.stringify(msg.json(), null, 2));
-    const res = JSON.stringify(msg.json(), null, 2);
     return msg.json();
   } catch (err) {
     console.error("Error in requestTicketState:", err);

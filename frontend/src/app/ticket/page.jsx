@@ -30,14 +30,8 @@ export default function Ticket() {
       setHasError(false);
       try {
         const response = await requestTicketState(1);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setSeats(data.state.state.areas);
-        const initialSeat = data.state.state.areas.find(
-          (seat) => seat.id === 1
-        );
+        setSeats(response.state.areas);
+        const initialSeat = response.state.areas.find((seat) => seat.id === 1);
         if (initialSeat) {
           setTicketsLeft(initialSeat.empty);
         }
@@ -67,9 +61,9 @@ export default function Ticket() {
     const selectedKey = Array.from(selectedKeys)[0];
     const selectedValue = parseInt(selectedKey, 10);
     setSelectedSeat(selectedValue);
-    const selectedSeat = seats.find((seat) => seat.id === selectedValue);
-    if (selectedSeat) {
-      setTicketsLeft(selectedSeat.empty);
+    const selectedArea = seats.find((seat) => seat.id === selectedValue);
+    if (selectedArea) {
+      setTicketsLeft(selectedArea.empty);
     }
   };
 
