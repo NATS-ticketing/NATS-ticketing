@@ -20,17 +20,11 @@ export default function Ticket() {
   const [ticketsLeft, setTicketsLeft] = useState(0);
   const [thisSession, setThisSession] = useState("");
   const [seats, setSeats] = useState([]);
-  const [selectedSeat, setSelectedSeat] = useState({
-    id: 1,
-    name: "",
-    empty: 0,
-    pending: 0,
-    total: 0,
-    price: 0,
-  });
+  const [selectedSeat, setSelectedSeat] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [selectedArea, setSelectedArea] = useState("");
 
   useEffect(() => {
     async function fetchTicketState() {
@@ -43,7 +37,6 @@ export default function Ticket() {
         const initialSeat = response.state.areas.find((seat) => seat.id === 1);
         if (initialSeat) {
           setTicketsLeft(initialSeat.empty);
-          setSelectedSeat(initialSeat);
         }
         setIsLoading(false);
       } catch (err) {
@@ -71,10 +64,10 @@ export default function Ticket() {
     const selectedKey = Array.from(selectedKeys)[0];
     const selectedValue = parseInt(selectedKey, 10);
     setSelectedSeat(selectedValue);
-    const selectedSeat = seats.find((seat) => seat.id === selectedValue);
-    if (selectedSeat) {
-      setSelectedSeat(selectedSeat);
-      setTicketsLeft(selectedSeat.empty);
+    const selectedArea = seats.find((seat) => seat.id === selectedValue);
+    if (selectedArea) {
+      setTicketsLeft(selectedArea.empty);
+      setSelectedArea(selectedArea.id);
     }
   };
 
@@ -84,7 +77,7 @@ export default function Ticket() {
     if (permisson === "granted") {
       setIsSubscribed(true);
       const subSession = thisSession;
-      const subArea = selectedSeat.id;
+      const subArea = selectedArea;
       subscribeTicketState(subSession, subArea); // 連接到後端服務並訂閱訊息
       alert("已訂閱釋票通知");
     } else {
