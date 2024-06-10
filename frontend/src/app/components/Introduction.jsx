@@ -6,7 +6,7 @@ export default function Introduction({
   ticketsLeft,
   seats,
   selectedSeat,
-  handleSeatChange,
+  onSeatChange,
 }) {
   const pathname = usePathname();
 
@@ -29,7 +29,7 @@ export default function Introduction({
                 selectedKeys={[selectedSeat.toString()]}
                 onChange={(keys) => {
                   console.log("Selected keys:", keys.target.value);
-                  handleSeatChange(keys.target.value);
+                  onSeatChange(keys.target.value);
                 }}
               >
                 {seats.map((seat) => (
