@@ -25,6 +25,8 @@ export default function Ticket() {
   const [hasError, setHasError] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [selectedArea, setSelectedArea] = useState("");
+  const [selectedAreaName, setSelectedAreaName] = useState("");
+  const [price, setPrice] = useState("");
 
   useEffect(() => {
     async function fetchTicketState() {
@@ -37,6 +39,9 @@ export default function Ticket() {
         const initialSeat = response.state.areas.find((seat) => seat.id === 1);
         if (initialSeat) {
           setTicketsLeft(initialSeat.empty);
+          setSelectedArea(initialSeat.id);
+          setSelectedAreaName(initialSeat.name);
+          setPrice(initialSeat.price);
         }
         setIsLoading(false);
       } catch (err) {
@@ -68,6 +73,8 @@ export default function Ticket() {
     if (selectedArea) {
       setTicketsLeft(selectedArea.empty);
       setSelectedArea(selectedArea.id);
+      setSelectedAreaName(selectedArea.name);
+      setPrice(selectedArea.price);
     }
   };
 
@@ -103,8 +110,8 @@ export default function Ticket() {
                 th1="票種"
                 th2="金額(NT$)"
                 th3="購買張數"
-                td1="VIP1"
-                td2="6888"
+                td1={selectedAreaName}
+                td2={price}
                 td3={
                   <Select
                     label="選擇張數"
