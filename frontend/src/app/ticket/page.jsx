@@ -12,33 +12,38 @@ import {
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
 import Link from "next/link";
-
-const ticketsLeft = 2;
+import { FaBell } from "react-icons/fa";
+import { requestTicketState, subscribeTicketState } from "@/app/lib/natsClient";
 
 export default function Ticket() {
   const [quantity, setQuantity] = useState("1");
   const [ticketsLeft, setTicketsLeft] = useState(0);
+  const [thisSession, setThisSession] = useState("");
   const [seats, setSeats] = useState([]);
-  const [selectedSeat, setSelectedSeat] = useState(1);
+  const [selectedSeat, setSelectedSeat] = useState({
+    id: 1,
+    name: "",
+    empty: 0,
+    pending: 0,
+    total: 0,
+    price: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
     async function fetchTicketState() {
       setIsLoading(true);
       setHasError(false);
       try {
-        const response = await fetch(`/api/ticketState?session=1`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setSeats(data.state.state.areas);
-        const initialSeat = data.state.state.areas.find(
-          (seat) => seat.id === 1
-        );
+        const response = await requestTicketState(1);
+        setThisSession(response.session);
+        setSeats(response.state.areas);
+        const initialSeat = response.state.areas.find((seat) => seat.id === 1);
         if (initialSeat) {
           setTicketsLeft(initialSeat.empty);
+          setSelectedSeat(initialSeat);
         }
         setIsLoading(false);
       } catch (err) {
@@ -54,7 +59,7 @@ export default function Ticket() {
     return (
       <div>
         <Header />
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex items-center justify-center h-screen">
           <CircularProgress size="lg" aria-label="Loading..." />
         </div>
         <Footer />
@@ -68,9 +73,24 @@ export default function Ticket() {
     setSelectedSeat(selectedValue);
     const selectedSeat = seats.find((seat) => seat.id === selectedValue);
     if (selectedSeat) {
+      setSelectedSeat(selectedSeat);
       setTicketsLeft(selectedSeat.empty);
     }
   };
+
+  async function handleSubscribe() {
+    const permisson = await Notification.requestPermission();
+    console.log("permisson:", permisson);
+    if (permisson === "granted") {
+      setIsSubscribed(true);
+      const subSession = thisSession;
+      const subArea = selectedSeat.id;
+      subscribeTicketState(subSession, subArea); // 連接到後端服務並訂閱訊息
+      alert("已訂閱釋票通知");
+    } else {
+      alert("通知權限未授予，無法訂閱釋票通知");
+    }
+  }
 
   return (
     <div>
@@ -81,39 +101,46 @@ export default function Ticket() {
             ticketsLeft={ticketsLeft}
             seats={seats}
             selectedSeat={selectedSeat}
-            handleSeatChange={handleSeatChange}
+            onSeatChange={handleSeatChange}
           />
 
           {ticketsLeft > 0 ? (
-            <TicketArea
-              th1="票種"
-              th2="金額(NT$)"
-              th3="購買張數"
-              td1="VIP1"
-              td2="6888"
-              td3={
-                <Select
-                  label="選擇張數"
-                  variant="bordered"
-                  size="sm"
-                  className="w-1/2"
-                  defaultSelectedKeys="1"
-                  value={quantity}
-                  onChange={(event) => setQuantity(Number(event.target.value))}
-                >
-                  {Array.from(
-                    { length: Math.min(ticketsLeft, 4) },
-                    (_, i) => i + 1
-                  ).map((num) => (
-                    <SelectItem key={num}>{String(num)}</SelectItem>
-                  ))}
-                </Select>
-              }
-            />
+            <>
+              <TicketArea
+                th1="票種"
+                th2="金額(NT$)"
+                th3="購買張數"
+                td1="VIP1"
+                td2="6888"
+                td3={
+                  <Select
+                    label="選擇張數"
+                    variant="bordered"
+                    size="sm"
+                    className="w-1/2"
+                    defaultSelectedKeys="1"
+                    value={quantity}
+                    onChange={(event) =>
+                      setQuantity(Number(event.target.value))
+                    }
+                  >
+                    {Array.from(
+                      { length: Math.min(ticketsLeft, 4) },
+                      (_, i) => i + 1
+                    ).map((num) => (
+                      <SelectItem key={num}>{String(num)}</SelectItem>
+                    ))}
+                  </Select>
+                }
+              />
+              <ConfirmArea />
+            </>
           ) : (
-            <TicketsSoldOut />
+            <TicketsSoldOut
+              isSubscribed={isSubscribed}
+              onSubscribe={handleSubscribe}
+            />
           )}
-          <ConfirmArea />
         </div>
         <div className="col-span-2 pt-20">
           <img src="/aespa-seat.png" alt="aespa-seat" />
@@ -148,7 +175,7 @@ function ConfirmArea() {
   );
 }
 
-function TicketsSoldOut() {
+function TicketsSoldOut({ isSubscribed, onSubscribe }) {
   return (
     <div className="flex flex-col items-center mt-10">
       <div className="flex flex-col items-center justify-center w-9/12 h-48 space-y-2 bg-gray-300">
@@ -160,8 +187,19 @@ function TicketsSoldOut() {
           * 釋票通知只會通知您目前所選的票區
         </p>
       </div>
-      <Button radius="none" size="lg" className="mt-10 font-bold bg-amber-400">
-        釋票通知訂閱
+      <Button
+        radius="none"
+        size="lg"
+        className="mt-10 font-bold bg-amber-400"
+        onClick={onSubscribe}
+      >
+        {isSubscribed ? (
+          <>
+            已訂閱 <FaBell />
+          </>
+        ) : (
+          "釋票通知訂閱"
+        )}
       </Button>
     </div>
   );
