@@ -8,6 +8,8 @@ import TicketArea from "@/app/components/TicketArea";
 import { FaRegUser } from "react-icons/fa";
 import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
+import { requestConfirm } from "@/app/lib/natsClient";
+import { useRouter } from "next/navigation";
 
 export default function Order() {
   const [order, setOrder] = useState(null);
@@ -17,6 +19,7 @@ export default function Order() {
   const [price, setPrice] = useState(null);
   const [seats, setSeats] = useState(null);
   const [seatStatus, setSeatStatus] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
@@ -35,6 +38,17 @@ export default function Order() {
       console.error("No order details found in localStorage");
     }
   }, []);
+
+  async function handleConfirmClick() {
+    const response = await requestConfirm(sessionId, areaId, order, seats);
+    if (response.status === "success") {
+      alert("訂購成功!๛ก(ｰ̀ωｰ́ก)"); //๛ก(ｰ̀ωｰ́ก) //  ̒˶ｰ̀֊ｰ́ )
+      router.push("/");
+    } else if (response.status == "no_seat") {
+      alert("訂購失敗  (⑉･̆༥･̆⑉)  ");
+      router.push("/");
+    }
+  }
 
   return (
     <div className="bg-gray-100 ">
@@ -61,7 +75,13 @@ export default function Order() {
           <Button size="lg" className="font-bold" radius="sm">
             取消訂單
           </Button>
-          <Button color="primary" size="lg" className="font-bold" radius="sm">
+          <Button
+            color="primary"
+            size="lg"
+            className="font-bold"
+            radius="sm"
+            onClick={handleConfirmClick}
+          >
             完成訂單
           </Button>
         </div>
