@@ -28,6 +28,9 @@ export default function Order() {
       setPrice(orderDetails.price);
       setSeats(orderDetails.seats.toString());
       setSeatStatus(orderDetails.seatStatus);
+
+      // clean local storage
+      localStorage.removeItem("orderDetails");
     } else {
       console.error("No order details found in localStorage");
     }
