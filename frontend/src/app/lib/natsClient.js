@@ -2,6 +2,7 @@
 import { connect, StringCodec } from "nats";
 
 let nc;
+const sc = StringCodec();
 
 export async function getNatsClient() {
   if (!nc) {
@@ -52,6 +53,31 @@ export async function subscribeTicketState(subSession, subArea) {
     });
   } catch (err) {
     console.error("Error in subscribeTicketState:", err);
+    throw err;
+  }
+}
+
+export async function requestSnapUp(session, area, count) {
+  try {
+    const nc = await getNatsClient();
+    const subject = `ticketing.${session}.${area}.snapUp`;
+
+    const msg = await nc.request(
+      subject,
+      sc.encode(
+        JSON.stringify({
+          count: count,
+        })
+      ),
+      { timeout: 20000 }
+    );
+
+    const response = JSON.parse(sc.decode(msg.data));
+
+    console.log("msg:" + JSON.stringify(response, null, 2));
+    return response;
+  } catch (err) {
+    console.error("Error in requestSnapUp:", err);
     throw err;
   }
 }

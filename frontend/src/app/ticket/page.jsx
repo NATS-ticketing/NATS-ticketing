@@ -11,12 +11,16 @@ import {
 } from "@nextui-org/react";
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
-import Link from "next/link";
 import { FaBell } from "react-icons/fa";
-import { requestTicketState, subscribeTicketState } from "@/app/lib/natsClient";
+import {
+  requestTicketState,
+  subscribeTicketState,
+  requestSnapUp,
+} from "@/app/lib/natsClient";
+import { useRouter } from "next/navigation";
 
 export default function Ticket() {
-  const [quantity, setQuantity] = useState("1");
+  const [quantity, setQuantity] = useState(1);
   const [ticketsLeft, setTicketsLeft] = useState(0);
   const [thisSession, setThisSession] = useState("");
   const [seats, setSeats] = useState([]);
@@ -120,9 +124,9 @@ export default function Ticket() {
                     className="w-1/2"
                     defaultSelectedKeys="1"
                     value={quantity}
-                    onChange={(event) =>
-                      setQuantity(Number(event.target.value))
-                    }
+                    onChange={(event) => {
+                      setQuantity(Number(event.target.value));
+                    }}
                   >
                     {Array.from(
                       { length: Math.min(ticketsLeft, 4) },
@@ -133,7 +137,12 @@ export default function Ticket() {
                   </Select>
                 }
               />
-              <ConfirmArea />
+              <ConfirmArea
+                thisSession={thisSession}
+                selectedArea={selectedArea}
+                selectedAreaName={selectedAreaName}
+                quantity={quantity}
+              />
             </>
           ) : (
             <TicketsSoldOut
@@ -151,10 +160,45 @@ export default function Ticket() {
   );
 }
 
-function ConfirmArea() {
+function ConfirmArea({
+  thisSession,
+  selectedArea,
+  selectedAreaName,
+  quantity,
+}) {
+  const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
+
+  async function handleClick() {
+    if (!isSelected) {
+      alert("請先同意服務條款與隱私權政策");
+      return;
+    }
+
+    const response = await requestSnapUp(thisSession, selectedArea, quantity);
+    if (response.status == "success") {
+      localStorage.setItem(
+        "orderDetails",
+        JSON.stringify({
+          order: response.order,
+          sessionId: thisSession,
+          areaId: selectedArea,
+          areaName: selectedAreaName,
+          price: response.price,
+          seats: response.seats,
+          seatStatus: response.seat_status,
+        })
+      );
+      router.push("/order");
+    } else if (response.status == "no_seat") {
+      alert("沒票囉 (｡•́︿•̀｡) ");
+      router.push("/");
+    }
+  }
+
   return (
     <div className="mt-12">
-      <Checkbox>
+      <Checkbox isSelected={isSelected} onValueChange={setIsSelected}>
         <p>
           我已經閱讀並同意{" "}
           <span className="text-amber-600 hover:underline">服務條款</span> 與{" "}
@@ -162,14 +206,15 @@ function ConfirmArea() {
         </p>
       </Checkbox>
       <div className="flex justify-center w-full mt-10">
-        <Link href="/order">
-          {/* <Button radius="none" size="lg" className="font-bold bg-amber-400">
-            確認張數
-          </Button> */}
-          <Button color="primary" size="lg" radius="sm" className="font-bold">
-            確認張數
-          </Button>
-        </Link>
+        <Button
+          color="primary"
+          size="lg"
+          radius="sm"
+          className="font-bold"
+          onClick={handleClick}
+        >
+          確認張數
+        </Button>
       </div>
     </div>
   );
