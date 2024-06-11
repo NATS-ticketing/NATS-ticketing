@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Introduction from "@/app/components/Introduction";
@@ -8,6 +10,29 @@ import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
 
 export default function Order() {
+  const [order, setOrder] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
+  const [areaId, setAreaId] = useState(null);
+  const [areaName, setAreaName] = useState(null);
+  const [price, setPrice] = useState(null);
+  const [seats, setSeats] = useState(null);
+  const [seatStatus, setSeatStatus] = useState(null);
+
+  useEffect(() => {
+    const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+    if (orderDetails) {
+      setOrder(orderDetails.order);
+      setSessionId(orderDetails.sessionId);
+      setAreaId(orderDetails.areaId);
+      setAreaName(orderDetails.areaName);
+      setPrice(orderDetails.price);
+      setSeats(orderDetails.seats.toString());
+      setSeatStatus(orderDetails.seatStatus);
+    } else {
+      console.error("No order details found in localStorage");
+    }
+  }, []);
+
   return (
     <div className="bg-gray-100 ">
       <Header />
@@ -17,9 +42,9 @@ export default function Order() {
           th1="票種"
           th2="座位"
           th3="金額(NT$)"
-          td1=""
-          td2=""
-          td3=""
+          td1={areaName}
+          td2={seats}
+          td3={price}
         />
         <BuyerInfo />
         <OrderInfo title="付款方式" option="7-11 ibon付款">

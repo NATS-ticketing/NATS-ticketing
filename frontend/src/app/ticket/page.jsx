@@ -11,13 +11,13 @@ import {
 } from "@nextui-org/react";
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
-import Link from "next/link";
 import { FaBell } from "react-icons/fa";
 import {
   requestTicketState,
   subscribeTicketState,
   requestSnapUp,
 } from "@/app/lib/natsClient";
+import { useRouter } from "next/navigation";
 
 export default function Ticket() {
   const [quantity, setQuantity] = useState(1);
@@ -140,6 +140,7 @@ export default function Ticket() {
               <ConfirmArea
                 thisSession={thisSession}
                 selectedArea={selectedArea}
+                selectedAreaName={selectedAreaName}
                 quantity={quantity}
               />
             </>
@@ -159,8 +160,14 @@ export default function Ticket() {
   );
 }
 
-function ConfirmArea({ thisSession, selectedArea, quantity }) {
+function ConfirmArea({
+  thisSession,
+  selectedArea,
+  selectedAreaName,
+  quantity,
+}) {
   const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
 
   async function handleClick() {
     if (!isSelected) {
@@ -170,9 +177,22 @@ function ConfirmArea({ thisSession, selectedArea, quantity }) {
 
     const response = await requestSnapUp(thisSession, selectedArea, quantity);
     if (response.status == "success") {
-      alert("購買成功");
+      localStorage.setItem(
+        "orderDetails",
+        JSON.stringify({
+          order: response.order,
+          sessionId: thisSession,
+          areaId: selectedArea,
+          areaName: selectedAreaName,
+          price: response.price,
+          seats: response.seats,
+          seatStatus: response.seat_status,
+        })
+      );
+      router.push("/order");
     } else if (response.status == "no_seat") {
-      alert("沒票囉：（");
+      alert("沒票囉 (｡•́︿•̀｡) ");
+      router.push("/");
     }
   }
 
@@ -186,10 +206,6 @@ function ConfirmArea({ thisSession, selectedArea, quantity }) {
         </p>
       </Checkbox>
       <div className="flex justify-center w-full mt-10">
-        {/* <Link href="/order"> */}
-        {/* <Button radius="none" size="lg" className="font-bold bg-amber-400">
-            確認張數
-          </Button> */}
         <Button
           color="primary"
           size="lg"
@@ -199,7 +215,6 @@ function ConfirmArea({ thisSession, selectedArea, quantity }) {
         >
           確認張數
         </Button>
-        {/* </Link> */}
       </div>
     </div>
   );
