@@ -42,6 +42,7 @@ export default function Order() {
       <main className="flex flex-col w-3/5 px-5 pt-5 mx-auto my-10">
         <Introduction />
         <TicketArea
+          orderNumber={order ? order.substring(0, 8) : ""}
           th1="票種"
           th2="座位"
           th3="金額(NT$)"
