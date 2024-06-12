@@ -13,8 +13,9 @@ dotenv.config({
 });
 
 
-const nc = await connect({ servers: `ws://${process.env.NATS_IP}:443`});
 console.log(`ws://${process.env.NATS_IP}:443`);
+
+const nc = await connect({ servers: `ws://${process.env.NATS_IP}:443`});
 
 const sc = StringCodec();
 
