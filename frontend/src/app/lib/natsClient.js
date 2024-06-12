@@ -81,3 +81,44 @@ export async function requestSnapUp(session, area, count) {
     throw err;
   }
 }
+
+export async function requestConfirm(session, area, order, seats) {
+  try {
+    const nc = await getNatsClient();
+    const subject = `ticketing.${session}.${area}.${order}.confirm`;
+
+    const msg = await nc.request(
+      subject,
+      sc.encode(JSON.stringify({ seats: seats })),
+      { timeout: 20000 }
+    );
+
+    const response = JSON.parse(sc.decode(msg.data));
+
+    console.log("msg:" + JSON.stringify(response, null, 2));
+    return response;
+  } catch (err) {
+    console.error("Error in requestConfirm:", err);
+    throw err;
+  }
+}
+
+export async function requestCancel(session, area, order, seats) {
+  try {
+    const nc = await getNatsClient();
+    const subject = `ticketing.${session}.${area}.${order}.cancel`;
+
+    const msg = await nc.request(
+      subject,
+      sc.encode(JSON.stringify({ seats: seats })),
+      { timeout: 20000 }
+    );
+
+    const response = JSON.parse(sc.decode(msg.data));
+    console.log("msg:" + JSON.stringify(response, null, 2));
+    return response;
+  } catch (err) {
+    console.error("Error in requestCancel:", err);
+    throw err;
+  }
+}

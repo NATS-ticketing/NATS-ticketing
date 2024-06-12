@@ -2,7 +2,15 @@
 import { usePathname } from "next/navigation";
 import StepsBar from "./StepsBar";
 
-export default function TicketArea({ th1, th2, th3, td1, td2, td3 }) {
+export default function TicketArea({
+  th1,
+  th2,
+  th3,
+  td1,
+  td2,
+  td3,
+  orderNumber,
+}) {
   const pathname = usePathname();
 
   return (
@@ -11,7 +19,7 @@ export default function TicketArea({ th1, th2, th3, td1, td2, td3 }) {
       {pathname === "/order" && (
         <div className="pb-2">
           <span className="font-semibold text-red-500">
-            訂單編號 <span>20280325</span>
+            訂單編號 <span>{orderNumber}</span>
           </span>
         </div>
       )}

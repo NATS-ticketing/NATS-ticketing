@@ -8,6 +8,8 @@ import TicketArea from "@/app/components/TicketArea";
 import { FaRegUser } from "react-icons/fa";
 import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
+import { requestConfirm, requestCancel } from "@/app/lib/natsClient";
+import { useRouter } from "next/navigation";
 
 export default function Order() {
   const [order, setOrder] = useState(null);
@@ -17,6 +19,7 @@ export default function Order() {
   const [price, setPrice] = useState(null);
   const [seats, setSeats] = useState(null);
   const [seatStatus, setSeatStatus] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
@@ -28,10 +31,50 @@ export default function Order() {
       setPrice(orderDetails.price);
       setSeats(orderDetails.seats.toString());
       setSeatStatus(orderDetails.seatStatus);
+
+      // clean local storage
+      localStorage.removeItem("orderDetails");
     } else {
       console.error("No order details found in localStorage");
     }
   }, []);
+
+  async function confirmOrder() {
+    const response = await requestConfirm(sessionId, areaId, order, seats);
+    if (response.status === "success") {
+      alert("訂購成功!๛ก(ｰ̀ωｰ́ก)"); //๛ก(ｰ̀ωｰ́ก) //  ̒˶ｰ̀֊ｰ́ )
+      router.push("/");
+    } else if (response.status == "no_seat") {
+      alert("訂購失敗  (⑉･̆༥･̆⑉)  ");
+      router.push("/");
+    }
+  }
+
+  async function cancelOrder() {
+    const response = await requestCancel(sessionId, areaId, order, seats);
+    if (response.status === "success") {
+      alert("取消訂單成功!  (⑉･̆༥･̆⑉)  ");
+      router.push("/");
+    } else {
+      console.log("取消訂單失敗");
+    }
+  }
+
+  function handleCancel() {
+    cancelOrder();
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    confirmOrder();
+  }
+
+  // 防止按下 Enter 後 form 會自動 submit
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  }
 
   return (
     <div className="bg-gray-100 ">
@@ -39,28 +82,42 @@ export default function Order() {
       <main className="flex flex-col w-3/5 px-5 pt-5 mx-auto my-10">
         <Introduction />
         <TicketArea
+          orderNumber={order ? order.substring(0, 8) : ""}
           th1="票種"
           th2="座位"
           th3="金額(NT$)"
           td1={areaName}
           td2={seats}
-          td3={price}
+          td3={price && seats ? price * seats.split(",").length : 0}
         />
-        <BuyerInfo />
-        <OrderInfo title="付款方式" option="7-11 ibon付款">
-          至全台 7-11 店內 ibon 機台自行列印付款繳費單，再進行付款。
-        </OrderInfo>
-        <OrderInfo title="取票方式" option="7-11 ibon取票">
-          至全台 7-11 店內 ibon 機台操作付款後，即可取票。
-        </OrderInfo>
-        <div className="flex justify-center my-10 gap-14">
-          <Button size="lg" className="font-bold" radius="sm">
-            取消訂單
-          </Button>
-          <Button color="primary" size="lg" className="font-bold" radius="sm">
-            完成訂單
-          </Button>
-        </div>
+        <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+          <BuyerInfo />
+          <OrderInfo title="付款方式" option="7-11 ibon付款">
+            至全台 7-11 店內 ibon 機台自行列印付款繳費單，再進行付款。
+          </OrderInfo>
+          <OrderInfo title="取票方式" option="7-11 ibon取票">
+            至全台 7-11 店內 ibon 機台操作付款後，即可取票。
+          </OrderInfo>
+          <div className="flex justify-center my-10 gap-14">
+            <Button
+              size="lg"
+              className="font-bold"
+              radius="sm"
+              onClick={handleCancel}
+            >
+              取消訂單
+            </Button>
+            <Button
+              color="primary"
+              size="lg"
+              className="font-bold"
+              radius="sm"
+              type="submit"
+            >
+              完成訂單
+            </Button>
+          </div>
+        </form>
       </main>
       <Footer />
     </div>
@@ -82,12 +139,16 @@ function BuyerInfo() {
               label="姓名"
               labelPlacement="outside-left"
               isRequired
+              required
+              name="name"
             />
             <Input
               type="text"
               label="手機"
               labelPlacement="outside-left"
               isRequired
+              required
+              name="phone"
             />
           </div>
           <div className="flex flex-col w-3/5 gap-3">
@@ -96,16 +157,20 @@ function BuyerInfo() {
               label="出生年月日"
               placeholderValue={new CalendarDate(1995, 11, 6)}
               labelPlacement="outside-left"
+              required
+              name="birthday"
             />
             <div className="flex items-center ">
               <label className="w-1/4 text-sm">
                 電子信箱<span className="text-red-500"> *</span>
               </label>
               <Input
-                type="text"
+                type="email"
                 labelPlacement="inside"
                 isRequired
                 className="w-full"
+                required
+                name="email"
               />
             </div>
           </div>
