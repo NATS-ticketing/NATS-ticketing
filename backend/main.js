@@ -13,11 +13,24 @@ dotenv.config({
 
 console.log(process.env.MONGO_URL);
 
-mongoose.connect(`${process.env.MONGO_URL}`, { dbName: "ticketing" })
+mongoose.connect(`${process.env.MONGO_URL}`, { 
+    dbName: "ticketing",
+    minPoolSize: 5,
+    })
     .catch(err => console.log(err));
 
 mongoose.connection.on('connected', () => console.log('Mongo connected'));
 mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
+
+
+// const conn = mongoose.createConnection(`${process.env.MONGO_URL}`, { dbName: "ticketing" });
+
+// conn.on('connected', () => console.log('connected'));
+// conn.on('open', () => console.log('open'));
+// conn.on('disconnected', () => console.log('disconnected'));
+// conn.on('reconnected', () => console.log('reconnected'));
+// conn.on('disconnecting', () => console.log('disconnecting'));
+// conn.on('close', () => console.log('close'));
 
 const servers = process.env.NATS_URL;
 const nc = await connect({
