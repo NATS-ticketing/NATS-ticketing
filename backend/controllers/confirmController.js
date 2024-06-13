@@ -16,7 +16,7 @@ export const confirmController = {
 
             const result = await orderService.confirmOrder(session,area,order,seats);
 
-            if(result === false){
+            if(!result){
                 msg?.respond(JSON.stringify({
                     "status": "error",
                     "message": "order expired"
