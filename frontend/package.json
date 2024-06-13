@@ -12,12 +12,14 @@
     "@nextui-org/react": "^2.3.0",
     "framer-motion": "^11.2.6",
     "nats": "^2.26.0",
+    "nats.ws": "^1.27.0",
     "next": "^14.2.3",
     "react": "^18",
     "react-dom": "^18",
     "react-easy-swipe": "^0.0.23",
     "react-icons": "^5.2.1",
-    "react-responsive-carousel": "^3.2.23"
+    "react-responsive-carousel": "^3.2.23",
+    "sweetalert2": "^11.11.1"
   },
   "devDependencies": {
     "eslint": "^8",

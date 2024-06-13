@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Introduction from "@/app/components/Introduction";
@@ -10,6 +9,7 @@ import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
 import { requestConfirm, requestCancel } from "@/app/lib/natsClient";
 import { useRouter } from "next/navigation";
+import Swal, { SweetAlertIcon } from "sweetalert2";
 
 export default function Order() {
   const [order, setOrder] = useState(null);
@@ -42,10 +42,18 @@ export default function Order() {
   async function confirmOrder() {
     const response = await requestConfirm(sessionId, areaId, order, seats);
     if (response.status === "success") {
-      alert("訂購成功!๛ก(ｰ̀ωｰ́ก)"); //๛ก(ｰ̀ωｰ́ก) //  ̒˶ｰ̀֊ｰ́ )
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "訂購成功!๛ก(ｰ̀ωｰ́ก)",
+      });
       router.push("/");
     } else if (response.status == "no_seat") {
-      alert("訂購失敗  (⑉･̆༥･̆⑉)  ");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "訂購失敗  (⑉･̆༥･̆⑉)  ",
+      });
       router.push("/");
     }
   }
@@ -53,7 +61,11 @@ export default function Order() {
   async function cancelOrder() {
     const response = await requestCancel(sessionId, areaId, order, seats);
     if (response.status === "success") {
-      alert("取消訂單成功!  (⑉･̆༥･̆⑉)  ");
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "取消訂單成功!(⑉･̆༥･̆⑉)",
+      });
       router.push("/");
     } else {
       console.log("取消訂單失敗");

@@ -20,7 +20,7 @@ async function getNatsWSClient() {
 export async function subscribeTicketState(subSession, subArea, callback) {
   try {
     const nc = await getNatsWSClient();
-    const subject = `ticketing.${subSession}.notify.3`; //${subArea}
+    const subject = `ticketing.${subSession}.notify.${subArea}`;
     console.log("Subscribing to:", subject);
 
     const sub = await nc.subscribe(subject, {

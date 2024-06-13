@@ -15,6 +15,7 @@ import { FaBell } from "react-icons/fa";
 import { requestTicketState, requestSnapUp } from "@/app/lib/natsClient";
 import { subscribeTicketState } from "@/app/lib/wsClient";
 import { useRouter } from "next/navigation";
+import Swal, { SweetAlertIcon } from "sweetalert2";
 
 export default function Ticket() {
   const [quantity, setQuantity] = useState(1);
@@ -96,9 +97,12 @@ export default function Ticket() {
       new Notification(
         `釋放票區通知: ${response.area_name} 有 ${response.empty} 個空位`
       );
-      alert("已訂閱釋票通知");
     } else {
-      alert("通知權限未授予，無法訂閱釋票通知");
+      Swal.fire({
+        icon: "warning",
+        title: "Sorry!",
+        text: "通知權限未授予，無法訂閱釋票通知!",
+      });
     }
   }
 
@@ -177,7 +181,11 @@ function ConfirmArea({
 
   async function handleClick() {
     if (!isSelected) {
-      alert("請先同意服務條款與隱私權政策");
+      Swal.fire({
+        title: "Sorry!",
+        text: "請先同意服務條款與隱私權政策",
+        icon: "warning",
+      });
       return;
     }
 
@@ -197,7 +205,11 @@ function ConfirmArea({
       );
       router.push("/order");
     } else if (response.status == "no_seat") {
-      alert("沒票囉 (｡•́︿•̀｡) ");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "沒票囉 (｡•́︿•̀｡) ",
+      });
       router.push("/");
     }
   }
