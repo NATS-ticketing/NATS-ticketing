@@ -7,7 +7,7 @@ import TicketArea from "@/app/components/TicketArea";
 import { FaRegUser } from "react-icons/fa";
 import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
-import { requestConfirm, requestCancel } from "@/app/lib/natsClient";
+import { requestConfirm, requestCancel } from "@/app/lib/wsClient";
 import { useRouter } from "next/navigation";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 

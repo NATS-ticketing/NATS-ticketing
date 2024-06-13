@@ -12,8 +12,11 @@ import {
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
 import { FaBell } from "react-icons/fa";
-import { requestTicketState, requestSnapUp } from "@/app/lib/natsClient";
-import { subscribeTicketState } from "@/app/lib/wsClient";
+import {
+  requestTicketState,
+  subscribeTicketState,
+  requestSnapUp,
+} from "@/app/lib/wsClient";
 import { useRouter } from "next/navigation";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 
