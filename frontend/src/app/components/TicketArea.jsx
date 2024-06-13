@@ -34,7 +34,9 @@ export default function TicketArea({
         <tbody className="w-full border-b-2 border-black">
           <tr className="h-28">
             <td className="font-semibold text-center align-middle">{td1}</td>
-            <td className="font-semibold text-center align-middle">{td2}</td>
+            <td className="font-semibold text-center align-middle">
+              {td2 ? td2.toString() : ""}
+            </td>
             <td className="font-semibold text-center align-middle">{td3}</td>
           </tr>
         </tbody>

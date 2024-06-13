@@ -29,7 +29,7 @@ export default function Order() {
       setAreaId(orderDetails.areaId);
       setAreaName(orderDetails.areaName);
       setPrice(orderDetails.price);
-      setSeats(orderDetails.seats.toString());
+      setSeats(orderDetails.seats);
       setSeatStatus(orderDetails.seatStatus);
 
       // clean local storage
@@ -100,7 +100,7 @@ export default function Order() {
           th3="金額(NT$)"
           td1={areaName}
           td2={seats}
-          td3={price && seats ? price * seats.split(",").length : 0}
+          td3={price && seats ? price * seats.length : 0}
         />
         <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
           <BuyerInfo />
