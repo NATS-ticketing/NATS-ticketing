@@ -12,16 +12,15 @@ dotenv.config({
 });
 
 console.log(process.env.MONGO_URL);
-
-mongoose.connect(`${process.env.MONGO_URL}`, { 
+await mongoose.connect(`${process.env.MONGO_URL}`, { 
     dbName: "ticketing",
-    minPoolSize: 5,
+    minPoolSize: 10,
     })
     .catch(err => console.log(err));
 
-mongoose.connection.on('connected', () => console.log('Mongo connected'));
+mongoose.set('bufferCommands', false);
+mongoose.connection.on('connected', () => console.log('Mongo connected, minPoolSize:', mongoose.connection.getClient().options.minPoolSize));
 mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
-
 
 // const conn = mongoose.createConnection(`${process.env.MONGO_URL}`, { dbName: "ticketing" });
 

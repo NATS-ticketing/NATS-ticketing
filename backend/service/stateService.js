@@ -4,16 +4,31 @@ import Seat from '../models/seatModel.js';
 export const stateService = {
     getSeatState: async(sessionId) => {
         try {
-            let session = await Session.findOne({ session_id: Number(sessionId) }).lean();
+            let query_time = new Date();
+            sessionId = Number(sessionId);
+
+            let session = await Session.findOne({ session_id: sessionId }).lean();
             if (!session) return { status: "error", message: "Session not found" };
 
-            const seats = await Seat.find({ session_id: Number(sessionId) }).lean();
+            const seatStatusCounts = await Seat.aggregate([
+                { $match: { session_id: sessionId } },
+                {
+                    $group: {
+                        _id: {
+                            area_id: "$area_id",
+                            seat_status: "$seat_status"
+                        },
+                        count: { $sum: 1 }
+                    }
+                }
+            ]);
+
 
             const areas = session.areas.map(area => {
-                const areaSeats = seats.filter(seat => seat.area_id === area.area_id);
-                const emptySeats = areaSeats.filter(seat => seat.seat_status === 0).length;
-                const pendingSeats = areaSeats.filter(seat => seat.seat_status === 1).length;
-
+                const areaSeats = seatStatusCounts.filter(status => status._id.area_id === area.area_id);
+                const emptySeats = areaSeats.find(status => status._id.seat_status === 0)?.count || 0;
+                const pendingSeats = areaSeats.find(status => status._id.seat_status === 1)?.count || 0;
+            
                 return {
                     id: area.area_id,
                     name: area.area_name,
@@ -23,6 +38,9 @@ export const stateService = {
                     price: area.price
                 };
             });
+
+            query_time = new Date() - query_time;
+            console.log(`Query time: ${query_time}ms`);
 
             return {
                 status: "success",
