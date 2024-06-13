@@ -12,11 +12,8 @@ import {
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
 import { FaBell } from "react-icons/fa";
-import {
-  requestTicketState,
-  subscribeTicketState,
-  requestSnapUp,
-} from "@/app/lib/natsClient";
+import { requestTicketState, requestSnapUp } from "@/app/lib/natsClient";
+import { subscribeTicketState } from "@/app/lib/wsClient";
 import { useRouter } from "next/navigation";
 
 export default function Ticket() {
@@ -88,8 +85,17 @@ export default function Ticket() {
     if (permisson === "granted") {
       setIsSubscribed(true);
       const subSession = thisSession;
-      const subArea = selectedArea;
-      subscribeTicketState(subSession, subArea); // 連接到後端服務並訂閱訊息
+      const subArea = selectedSeat.id;
+
+      const response = await new Promise((resolve, reject) => {
+        subscribeTicketState(subSession, subArea, (data) => {
+          resolve(data);
+        });
+      });
+      console.log("Notification res:", response);
+      new Notification(
+        `釋放票區通知: ${response.area_name} 有 ${response.empty} 個空位`
+      );
       alert("已訂閱釋票通知");
     } else {
       alert("通知權限未授予，無法訂閱釋票通知");

@@ -30,32 +30,34 @@ export async function requestTicketState(session) {
   }
 }
 
-export async function subscribeTicketState(subSession, subArea) {
-  try {
-    const nc = await getNatsClient();
-    const subject = `ticketing.${subSession}.notify.${subArea}`;
-    console.log("Subscribing to:", subject);
+// export async function subscribeTicketState(subSession, subArea) {
+//   try {
+//     const nc = await getNatsClient();
+//     const subject = `ticketing.${subSession}.notify.3`; //${subArea}
+//     console.log("Subscribing to:", subject);
 
-    const sub = nc.subscribe(subject, {
-      callback: (err, msg) => {
-        if (err) {
-          console.log("subscription error:", err.message);
-          alert("訂閱失敗，請稍後再試");
-          return;
-        }
+//     const sub = await nc.subscribe(subject, {
+//       callback: (err, msg) => {
+//         if (err) {
+//           console.log("subscription error:", err.message);
+//           alert("訂閱失敗，請稍後再試");
+//           return;
+//         }
 
-        const data = msg.data;
-        console.log("Notification:", data);
-        new Notification(
-          `釋放票區通知: $(data.area_name) 有 $(data.empty) 個空位`
-        );
-      },
-    });
-  } catch (err) {
-    console.error("Error in subscribeTicketState:", err);
-    throw err;
-  }
-}
+//         // const data = sc.decode(msg.data);
+//         // const jsonData = JSON.parse(data);
+//         // console.log("Notification jsonData:", jsonData);
+//         const response = msg.json();
+//         console.log("Notification response:", response);
+
+//         callback(response);
+//       },
+//     });
+//   } catch (err) {
+//     console.error("Error in subscribeTicketState:", err);
+//     throw err;
+//   }
+// }
 
 export async function requestSnapUp(session, area, count) {
   try {
