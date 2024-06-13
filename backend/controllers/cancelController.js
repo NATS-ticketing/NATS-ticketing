@@ -17,7 +17,7 @@ export const cancelController = {
 
             const result = await orderService.cancelOrder(session, area, order, seats);
 
-            if(result === false){
+            if(!result){
                 msg?.respond(JSON.stringify({
                     "status": "error",
                     "message": "cancel failed"
