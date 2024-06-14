@@ -4,8 +4,9 @@
 import { connect } from "nats";
 
 const config = {
-    vus: 100,
+    vus: 50,
     vu_messages: 1,
+    runs: 10,
 }
 
 const metrics = {
@@ -54,9 +55,14 @@ async function run() {
     const numMessages = config.vu_messages;
 
     const promises = [];
-    for (let i = 0; i < numWorkers; i++) {
-        promises.push(requestResponse(i, numMessages));
+    for(let k = 0; k < config.runs; k++) {
+        for (let i = 0; i < numWorkers; i++) {
+            promises.push(requestResponse(i, numMessages));
+        }
+        await new Promise(r => setTimeout(r, 2000));
+
     }
+
 
     await Promise.all(promises);
 
@@ -84,6 +90,7 @@ function printMetrics() {
     console.log(`data_sent.............: ${metrics.data_sent} B`);
     console.log(`iteration_duration....: avg=${avgDuration.toFixed(2)}s min=${minDuration.toFixed(2)}s med=${medDuration.toFixed(2)}s max=${maxDuration.toFixed(2)}s p(90)=${p90Duration.toFixed(2)}s p(95)=${p95Duration.toFixed(2)}s`);
     console.log(`iterations............: ${metrics.iterations}`);
+    console.log(`runs..................: ${config.runs}`);
     console.log(`vus...................: ${config.vus}`);
     console.log(`vu_messages...........: ${config.vu_messages}`);
 }
