@@ -1,13 +1,13 @@
 "use client";
-import { NextUIProvider, Image } from "@nextui-org/react";
-import { useState } from "react";
-import Link from "next/link";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
+import EventCard from "@/app/components/Home/EventCard";
 import carouselImgs from "/public/carouselImgs.json";
 import eventsInfo from "/public/eventsInfo.json";
+import { NextUIProvider } from "@nextui-org/react";
+import { useState } from "react";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
 
 export default function Home() {
   const [currSlide, setCurrSlide] = useState(0);
@@ -57,29 +57,5 @@ export default function Home() {
         <Footer />
       </div>
     </NextUIProvider>
-  );
-}
-
-function EventCard({ imgSrc, imgAlt, date, title }) {
-  return (
-    <div className="min-w-[300px] max-w-[calc(33%-1rem)] p-5">
-      <Link href="/ticket">
-        <div>
-          <Image
-            isZoomed
-            src={imgSrc}
-            alt={imgAlt}
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
-        <div className="m-3">
-          <small className="text-default-500">{date}</small>
-          <h4 className="font-bold hover:underline text-large hover:text-amber-500">
-            {title}
-          </h4>
-        </div>
-      </Link>
-    </div>
   );
 }

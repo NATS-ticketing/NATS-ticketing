@@ -1,24 +1,14 @@
 "use client";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import React, { useState, useEffect } from "react";
-import {
-  Select,
-  SelectItem,
-  Button,
-  Checkbox,
-  CircularProgress,
-} from "@nextui-org/react";
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
-import { FaBell } from "react-icons/fa";
-import {
-  requestTicketState,
-  subscribeTicketState,
-  requestSnapUp,
-} from "@/app/lib/wsClient";
-import { useRouter } from "next/navigation";
-import Swal, { SweetAlertIcon } from "sweetalert2";
+import ConfirmArea from "@/app/ticket/components/ConfirmArea";
+import TicketsSoldOut from "@/app/ticket/components/TicketsSoldOut";
+import { requestTicketState, subscribeTicketState } from "@/app/lib/wsClient";
+import React, { useState, useEffect } from "react";
+import { Select, SelectItem, CircularProgress } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 export default function Ticket() {
   const [quantity, setQuantity] = useState(1);
@@ -169,104 +159,6 @@ export default function Ticket() {
         </div>
       </main>
       <Footer />
-    </div>
-  );
-}
-
-function ConfirmArea({
-  thisSession,
-  selectedArea,
-  selectedAreaName,
-  quantity,
-}) {
-  const [isSelected, setIsSelected] = useState(false);
-  const router = useRouter();
-
-  async function handleClick() {
-    if (!isSelected) {
-      Swal.fire({
-        title: "Sorry!",
-        text: "請先同意服務條款與隱私權政策",
-        icon: "warning",
-      });
-      return;
-    }
-
-    const response = await requestSnapUp(thisSession, selectedArea, quantity);
-    if (response.status == "success") {
-      localStorage.setItem(
-        "orderDetails",
-        JSON.stringify({
-          order: response.order,
-          sessionId: thisSession,
-          areaId: selectedArea,
-          areaName: selectedAreaName,
-          price: response.price,
-          seats: response.seats,
-          seatStatus: response.seat_status,
-        })
-      );
-      router.push("/order");
-    } else if (response.status == "no_seat") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "沒票囉 (｡•́︿•̀｡) ",
-      });
-      router.push("/");
-    }
-  }
-
-  return (
-    <div className="mt-12">
-      <Checkbox isSelected={isSelected} onValueChange={setIsSelected}>
-        <p>
-          我已經閱讀並同意{" "}
-          <span className="text-amber-600 hover:underline">服務條款</span> 與{" "}
-          <span className="text-amber-600 hover:underline">隱私權政策</span>。
-        </p>
-      </Checkbox>
-      <div className="flex justify-center w-full mt-10">
-        <Button
-          color="primary"
-          size="lg"
-          radius="sm"
-          className="font-bold"
-          onClick={handleClick}
-        >
-          確認張數
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-function TicketsSoldOut({ isSubscribed, onSubscribe }) {
-  return (
-    <div className="flex flex-col items-center mt-10">
-      <div className="flex flex-col items-center justify-center w-9/12 h-48 space-y-2 bg-gray-300">
-        <p className="font-bold">您選擇的票區目前已售完，請選擇其他票區。</p>
-        <p className="font-bold">
-          您可以選擇訂閱該區的釋票通知，若有釋票，系統將會通知您。
-        </p>
-        <p className="font-bold text-red-600">
-          * 釋票通知只會通知您目前所選的票區
-        </p>
-      </div>
-      <Button
-        radius="none"
-        size="lg"
-        className="mt-10 font-bold bg-amber-400"
-        onClick={onSubscribe}
-      >
-        {isSubscribed ? (
-          <>
-            已訂閱 <FaBell />
-          </>
-        ) : (
-          "釋票通知訂閱"
-        )}
-      </Button>
     </div>
   );
 }

@@ -1,15 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Introduction from "@/app/components/Introduction";
 import TicketArea from "@/app/components/TicketArea";
-import { FaRegUser } from "react-icons/fa";
-import { Input, DateInput, Button, RadioGroup, Radio } from "@nextui-org/react";
-import { CalendarDate } from "@internationalized/date";
+import BuyerInfo from "@/app/order/components/BuyerInfo";
+import OrderInfo from "@/app/order/components/OrderInfo";
 import { requestConfirm, requestCancel } from "@/app/lib/wsClient";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Swal, { SweetAlertIcon } from "sweetalert2";
+import { Button } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 export default function Order() {
   const [order, setOrder] = useState(null);
@@ -132,81 +132,6 @@ export default function Order() {
         </form>
       </main>
       <Footer />
-    </div>
-  );
-}
-
-function BuyerInfo() {
-  return (
-    <div className="grid grid-cols-10 mb-5 bg-gray-300 mt-14 h-44">
-      <div className="flex items-center justify-center h-full col-span-1 bg-amber-400">
-        <FaRegUser size={30} />
-      </div>
-      <div className="col-span-9 p-5">
-        <p className="mb-4 text-lg font-semibold">訂購人資料</p>
-        <div className="flex w-full gap-10">
-          <div className="flex flex-col gap-3">
-            <Input
-              type="text"
-              label="姓名"
-              labelPlacement="outside-left"
-              isRequired
-              required
-              name="name"
-            />
-            <Input
-              type="text"
-              label="手機"
-              labelPlacement="outside-left"
-              isRequired
-              required
-              name="phone"
-            />
-          </div>
-          <div className="flex flex-col w-3/5 gap-3">
-            <DateInput
-              isRequired
-              label="出生年月日"
-              placeholderValue={new CalendarDate(1995, 11, 6)}
-              labelPlacement="outside-left"
-              required
-              name="birthday"
-            />
-            <div className="flex items-center ">
-              <label className="w-1/4 text-sm">
-                電子信箱<span className="text-red-500"> *</span>
-              </label>
-              <Input
-                type="email"
-                labelPlacement="inside"
-                isRequired
-                className="w-full"
-                required
-                name="email"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function OrderInfo({ title, option, children }) {
-  return (
-    <div className="my-5">
-      <span className="font-semibold">{title}</span>
-      <div className="h-24 p-5 my-2 bg-gray-300">
-        <RadioGroup defaultValue={option} color="warning">
-          <Radio value={option} className="font-semibold">
-            {option}
-          </Radio>
-          <p className="px-7">
-            {children}
-            <span className="text-red-500">每筆取票手續費30元。</span>
-          </p>
-        </RadioGroup>
-      </div>
     </div>
   );
 }
