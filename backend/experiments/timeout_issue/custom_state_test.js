@@ -4,7 +4,7 @@
 import { connect } from "nats";
 
 const config = {
-    vus: 50,
+    vus: 100,
     vu_messages: 1,
     runs: 10,
 }
@@ -28,7 +28,7 @@ async function run() {
             metrics.iterations++;
             try {
                 const payload = "";
-                const msg = await nc.request('ticketing.1.state', payload, { timeout: 10000 });
+                const msg = await nc.request('testticketing.1.state', payload, { timeout: 10000 });
                 if(JSON.parse(msg.data.toString()).state.status != "success") {
                     throw new Error("Response status is not success");
                 }
@@ -93,6 +93,16 @@ function printMetrics() {
     console.log(`runs..................: ${config.runs}`);
     console.log(`vus...................: ${config.vus}`);
     console.log(`vu_messages...........: ${config.vu_messages}`);
+
+    const result = {
+        'avg': avgDuration,
+        'min': minDuration,
+        'med': medDuration,
+        'max': maxDuration,
+        'p(90)': p90Duration,
+        'p(95)': p95Duration
+    }
+    console.log(JSON.stringify(result));
 }
 
 run().catch(err => {
