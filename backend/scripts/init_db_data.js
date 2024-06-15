@@ -125,6 +125,7 @@ async function insertSessionData(
           seat_status: 0, // 0: empty
           order: null,
           expire: null,
+          __v: 0, // for concurrency control
         });
       }
     });

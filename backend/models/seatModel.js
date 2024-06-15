@@ -5,7 +5,7 @@ const seatSchema = new mongoose.Schema({
     seat: Number,
     seat_status: Number,
     order: String,
-    expire: Date
-});
+    expire: Date,
+}, { optimisticConcurrency: true });
 
 export default mongoose.model("Seat", seatSchema);

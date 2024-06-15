@@ -18,7 +18,7 @@ export const snapUpController = {
             const result = await snapUpService.bookSeat(session, area, count);
 
 
-            if (result === false) {
+            if (!result) {
                 msg?.respond(JSON.stringify({
                     "status": "no_seat",
                 }));
