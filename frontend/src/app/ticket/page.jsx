@@ -79,7 +79,7 @@ export default function Ticket() {
     if (permisson === "granted") {
       setIsSubscribed(true);
       const subSession = thisSession;
-      const subArea = selectedSeat.id;
+      const subArea = selectedSeat.id || 1;
 
       const response = await new Promise((resolve, reject) => {
         subscribeTicketState(subSession, subArea, (data) => {
