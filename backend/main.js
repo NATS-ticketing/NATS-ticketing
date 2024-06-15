@@ -11,16 +11,20 @@ dotenv.config({
     path: process.env.NODE_ENV === "prod" ? ".env" : ".env.test",
 });
 
-console.log(process.env.MONGO_URL);
-await mongoose.connect(`${process.env.MONGO_URL}`, { 
-    dbName: "ticketing",
-    minPoolSize: 10,
-    })
-    .catch(err => console.log(err));
 
 mongoose.set('bufferCommands', false);
+mongoose.set('debug', true);
+
+console.log(process.env.MONGO_URL);
+
+
 mongoose.connection.on('connected', () => console.log('Mongo connected, minPoolSize:', mongoose.connection.getClient().options.minPoolSize));
-mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
+mongoose.connection.on('disconnected', () => console.log('Mongo disconnected'));
+mongoose.connection.on('reconnected', () => console.log('Mongo reconnected'));
+mongoose.connection.on('close', () => console.log('Mongo close'));
+mongoose.connection.on('open', () => console.log('Mongo open'));
+mongoose.connection.on('disconnecting', () => console.log('Mongo disconnecting'));
+
 
 // const conn = mongoose.createConnection(`${process.env.MONGO_URL}`, { dbName: "ticketing" });
 
@@ -30,6 +34,22 @@ mongoose.connection.on('disconnected', () => console.log('Mogo disconnected'));
 // conn.on('reconnected', () => console.log('reconnected'));
 // conn.on('disconnecting', () => console.log('disconnecting'));
 // conn.on('close', () => console.log('close'));
+
+await mongoose.connect(`${process.env.MONGO_URL}`, { 
+    dbName: "ticketing",
+    minPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    heartbeatFrequencyMS: 2000,
+    })
+    .catch(err => console.log(err));
+
+const CHECK_DB_INTERVAL = 2000;
+setInterval(async() => {
+    // 基於某些神奇原因，mongoose 的 heartbeatFrequencyMS 似乎沒有用
+    // 所以主動用 ping 來確保連線
+    const res = await mongoose.connection.db.admin().ping();
+    console.log('Ping result:', res);
+}, CHECK_DB_INTERVAL);
 
 const servers = process.env.NATS_URL;
 const nc = await connect({
@@ -97,5 +117,4 @@ root.addEndpoint("cancel", {
         schema: "Cancel to buy the ticket",
     },
 });
-
 
